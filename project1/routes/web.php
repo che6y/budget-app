@@ -16,6 +16,9 @@ Route::get('/', function () {
 });
 
 
-Route::get('/purchases', function () {
-    return view('purchases');
-});
+Route::get('/purchases', 'PurchaseController@index');
+Route::post('/purchases', 'PurchaseController@store');
+Route::get('/purchases/create', 'PurchaseController@create');
+Route::get('/purchases/{id}/edit', 'PurchaseController@edit');
+Route::put('/purchases/{id}', 'PurchaseController@update');
+Route::delete('/purchases/{id}', 'PurchaseController@destroy');
