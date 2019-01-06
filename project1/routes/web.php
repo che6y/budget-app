@@ -10,15 +10,14 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
+Route::resource('purchases', 'PurchasesController');
 
-Route::get('/purchases', 'PurchaseController@index');
-Route::post('/purchases', 'PurchaseController@store');
-Route::get('/purchases/create', 'PurchaseController@create');
-Route::get('/purchases/{id}/edit', 'PurchaseController@edit');
-Route::put('/purchases/{id}', 'PurchaseController@update');
-Route::delete('/purchases/{id}', 'PurchaseController@destroy');
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');

@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Purchases')
+
 @section('content')
     <div>
         <a href="/purchases/create">Create</a>
