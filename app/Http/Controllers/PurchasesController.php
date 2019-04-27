@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PurchaseCollection;
+use App\Http\Resources\Purchase as PurchaseResource;
 use App\Purchase;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -12,13 +14,13 @@ class PurchasesController extends Controller
     /**
      * Display a listing of the purchases.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        $date = Carbon::now('+7');
-        $purchases = Purchase::where('created_at', '<', $date)->get();
-        return view('purchases.index', compact('purchases'));
+//        $date = Carbon::now('+7');
+//        $purchases = Purchase::where('created_at', '<', $date)->get();
+//        return view('purchases.index', compact('purchases'));
+        return new PurchaseCollection(Purchase::all());
     }
 
     /**
@@ -53,12 +55,12 @@ class PurchasesController extends Controller
     /**
      * Display the specified purchase.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  Purchase $purchase
+     * @return PurchaseResource
      */
-    public function show($id)
+    public function show(Purchase $purchase)
     {
-        //
+        return new PurchaseResource($purchase);
     }
 
     /**
@@ -77,12 +79,21 @@ class PurchasesController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return PurchaseResource
      */
-    public function update( Purchase $purchase )
+    public function update( Purchase $purchase, Request $request )
     {
-        $purchase->update( request(['title', 'description', 'cost', 'amount']));
-        return redirect('purchases' );
+//        $purchase->update( request(['title', 'description', 'cost', 'amount']));
+//        return redirect('purchases' );
+        $data = $request->validate([
+            'title' => 'required',
+            'cost' => 'required',
+        ]);
+
+        $purchase->update($data);
+
+        return new PurchaseResource($purchase);
+
     }
 
     /**

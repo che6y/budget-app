@@ -13,21 +13,22 @@ window.VueRouter = require('vue-router').default;
 Vue.use(VueRouter);
 
 window.App = require('./components/App').default;
-window.Hello = require('./components/Hello').default;
+window.Purchases = require('./components/PurchasesIndex').default;
+window.PurchasesEdit = require('./components/PurchasesEdit').default;
 
 const router = new VueRouter({
     mode: 'history',
     routes: [
         {
-            path: '/app/app',
-            name: 'app',
-            component: App
+            path: '/purchases',
+            name: 'purchases.index',
+            component: Purchases
         },
         {
-            path: '/app/hello',
-            name: 'hello',
-            component: Hello
-        }
+            path: '/purchases/:id/edit',
+            name: 'purchases.edit',
+            component: PurchasesEdit,
+        },
     ],
 });
 

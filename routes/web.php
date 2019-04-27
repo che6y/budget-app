@@ -12,13 +12,13 @@
 */
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::resource('purchases', 'PurchasesController');
+//Route::get('/', function () {
+//    return view('welcome');
+//});
+//
+//Route::resource('purchases', 'PurchasesController');
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/app/{any}', 'AppController@index')->where('any', '.*');
+//Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/{any}', 'AppController@index')->where('any', '.*');

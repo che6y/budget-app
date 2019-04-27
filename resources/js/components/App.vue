@@ -1,7 +1,6 @@
 <template>
     <div>
-        this is an app
-        <router-link :to="{ name: 'hello' }">Hello World</router-link>
+        <router-link :to="{ name: 'purchases.index' }">Purcheses</router-link>
         <div class="container">
             <router-view></router-view>
         </div>

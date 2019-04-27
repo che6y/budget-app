@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Http\Request;
+use App\Purchase;
+use App\Http\Resources\PurchaseCollection;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +18,10 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+//Route::get('/purchases', function () {
+//    return new PurchaseCollection(Purchase::all());
+//});
+Route::get('/purchases', 'PurchasesController@index');
+Route::get('/purchases/{purchase}', 'PurchasesController@show');
+Route::put('/purchases/{purchase}', 'PurchasesController@update');
