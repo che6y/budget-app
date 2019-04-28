@@ -88,6 +88,7 @@ class PurchasesController extends Controller
         $data = $request->validate([
             'title' => 'required',
             'cost' => 'required',
+            'amount' => 'required'
         ]);
 
         $purchase->update($data);

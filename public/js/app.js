@@ -1807,6 +1807,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -1817,7 +1821,8 @@ __webpack_require__.r(__webpack_exports__);
       purchase: {
         id: null,
         title: "",
-        cost: ""
+        cost: "",
+        amount: null
       }
     };
   },
@@ -1828,7 +1833,8 @@ __webpack_require__.r(__webpack_exports__);
       this.saving = true;
       _api_purchases__WEBPACK_IMPORTED_MODULE_0__["default"].update(this.purchase.id, {
         title: this.purchase.title,
-        cost: this.purchase.cost
+        cost: this.purchase.cost,
+        amount: this.purchase.amount
       }).then(function (response) {
         _this.message = 'Purchase updated';
         setTimeout(function () {
@@ -1845,7 +1851,7 @@ __webpack_require__.r(__webpack_exports__);
   created: function created() {
     var _this2 = this;
 
-    _api_purchases__WEBPACK_IMPORTED_MODULE_0__["default"].find(this.$route.params.id).then(function (response) {
+    _api_purchases__WEBPACK_IMPORTED_MODULE_0__["default"].find(this.$route.params.purchase).then(function (response) {
       _this2.loaded = true;
       _this2.purchase = response.data.data;
     });
@@ -37247,6 +37253,7 @@ var render = function() {
     _c(
       "form",
       {
+        staticClass: "form-row justify-content-start",
         on: {
           submit: function($event) {
             $event.preventDefault()
@@ -37255,7 +37262,7 @@ var render = function() {
         }
       },
       [
-        _c("div", { staticClass: "form-group" }, [
+        _c("div", { staticClass: "form-group col-md-6" }, [
           _c("label", { attrs: { for: "purchase_title" } }, [_vm._v("Title")]),
           _vm._v(" "),
           _c("input", {
@@ -37267,6 +37274,7 @@ var render = function() {
                 expression: "purchase.title"
               }
             ],
+            staticClass: "form-control",
             attrs: { id: "purchase_title" },
             domProps: { value: _vm.purchase.title },
             on: {
@@ -37280,7 +37288,7 @@ var render = function() {
           })
         ]),
         _vm._v(" "),
-        _c("div", { staticClass: "form-group" }, [
+        _c("div", { staticClass: "form-group col-md-3" }, [
           _c("label", { attrs: { for: "purchase_cost" } }, [_vm._v("Price")]),
           _vm._v(" "),
           _c("input", {
@@ -37292,6 +37300,7 @@ var render = function() {
                 expression: "purchase.cost"
               }
             ],
+            staticClass: "form-control",
             attrs: { id: "purchase_cost", type: "number" },
             domProps: { value: _vm.purchase.cost },
             on: {
@@ -37305,10 +37314,48 @@ var render = function() {
           })
         ]),
         _vm._v(" "),
-        _c("div", { staticClass: "form-group" }, [
-          _c("button", { attrs: { type: "submit", disabled: _vm.saving } }, [
-            _vm._v("Update")
-          ])
+        _c("div", { staticClass: "form-group col-md-3" }, [
+          _c("label", { attrs: { for: "purchase_amount" } }, [
+            _vm._v("Amount")
+          ]),
+          _vm._v(" "),
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.purchase.amount,
+                expression: "purchase.amount"
+              }
+            ],
+            staticClass: "form-control mx-sm-6",
+            attrs: {
+              id: "purchase_amount",
+              type: "number",
+              min: "1",
+              step: "1"
+            },
+            domProps: { value: _vm.purchase.amount },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.$set(_vm.purchase, "amount", $event.target.value)
+              }
+            }
+          })
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "form-group col-md-6" }, [
+          _c(
+            "button",
+            {
+              staticClass: "btn btn-primary",
+              attrs: { type: "submit", disabled: _vm.saving }
+            },
+            [_vm._v("Update")]
+          )
         ])
       ]
     )
@@ -37336,7 +37383,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "users" }, [
+  return _c("div", { staticClass: "purchases" }, [
     _vm.loading
       ? _c("div", { staticClass: "loading" }, [
           _vm._v("\n        Loading...\n    ")
@@ -37352,11 +37399,11 @@ var render = function() {
     _vm.purchases
       ? _c(
           "ul",
-          { staticClass: "purchase-items" },
+          { staticClass: "list-group" },
           _vm._l(_vm.purchases, function(purchase) {
             return _c(
               "li",
-              { staticClass: "purchase-item" },
+              { staticClass: "list-group-item" },
               [
                 _vm._v(
                   "\n            " +
@@ -37371,7 +37418,7 @@ var render = function() {
                     attrs: {
                       to: {
                         name: "purchases.edit",
-                        params: { idgit: _vm.idgit }
+                        params: { purchase: purchase.id }
                       }
                     }
                   },
@@ -52224,7 +52271,7 @@ var router = new VueRouter({
     name: 'purchases.index',
     component: Purchases
   }, {
-    path: '/purchases/:id/edit',
+    path: '/purchases/:purchase/edit',
     name: 'purchases.edit',
     component: PurchasesEdit
   }]

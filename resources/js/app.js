@@ -25,7 +25,7 @@ const router = new VueRouter({
             component: Purchases
         },
         {
-            path: '/purchases/:id/edit',
+            path: '/purchases/:purchase/edit',
             name: 'purchases.edit',
             component: PurchasesEdit,
         },

@@ -1,5 +1,5 @@
 <template>
-    <div class="users">
+    <div class="purchases">
         <div class="loading" v-if="loading">
             Loading...
         </div>
@@ -8,10 +8,10 @@
             {{ error }}
         </div>
 
-        <ul v-if="purchases"class="purchase-items">
-            <li v-for="purchase in purchases" class="purchase-item">
+        <ul v-if="purchases"class="list-group">
+            <li v-for="purchase in purchases" class="list-group-item">
                 {{ purchase.title }} {{ purchase.cost * purchase.amount}} baht
-                <router-link :to="{ name: 'purchases.edit', params: { idgit  } }">Edit</router-link>
+                <router-link :to="{ name: 'purchases.edit', params: { purchase: purchase.id } }">Edit</router-link>
             </li>
         </ul>
     </div>
