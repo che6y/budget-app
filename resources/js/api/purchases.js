@@ -1,4 +1,4 @@
-import axios from 'axios';
+import ç from 'axios';
 
 export default {
     all() {
@@ -9,5 +9,8 @@ export default {
     },
     update(id, data) {
         return axios.put(`/api/purchases/${id}`, data);
+    },
+    delete(id) {
+        return axios.delete(`/api/purchases/${id}`);
     },
 };

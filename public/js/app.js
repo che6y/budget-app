@@ -1811,6 +1811,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -1846,14 +1848,27 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (_) {
         return _this.saving = false;
       });
+    },
+    onDelete: function onDelete() {
+      var _this2 = this;
+
+      this.saving = true;
+      _api_purchases__WEBPACK_IMPORTED_MODULE_0__["default"]["delete"](this.purchase.id).then(function (response) {
+        _this2.message = 'Item Deleted';
+        setTimeout(function () {
+          return _this2.$router.push({
+            name: 'purchases.index'
+          });
+        }, 2000);
+      });
     }
   },
   created: function created() {
-    var _this2 = this;
+    var _this3 = this;
 
     _api_purchases__WEBPACK_IMPORTED_MODULE_0__["default"].find(this.$route.params.purchase).then(function (response) {
-      _this2.loaded = true;
-      _this2.purchase = response.data.data;
+      _this3.loaded = true;
+      _this3.purchase = response.data.data;
     });
   }
 });
@@ -37351,10 +37366,39 @@ var render = function() {
           _c(
             "button",
             {
-              staticClass: "btn btn-primary",
+              staticClass: "btn btn-outline-primary",
               attrs: { type: "submit", disabled: _vm.saving }
             },
             [_vm._v("Update")]
+          ),
+          _vm._v(" "),
+          _c(
+            "button",
+            {
+              staticClass: "btn btn-outline-secondary",
+              attrs: { type: "button" },
+              on: {
+                click: function($event) {
+                  return _vm.$router.go(-1)
+                }
+              }
+            },
+            [_vm._v("Cancel")]
+          ),
+          _vm._v(" "),
+          _c(
+            "button",
+            {
+              staticClass: "btn btn-outline-danger",
+              attrs: { disabled: _vm.saving },
+              on: {
+                click: function($event) {
+                  $event.preventDefault()
+                  return _vm.onDelete($event)
+                }
+              }
+            },
+            [_vm._v("Delete")]
           )
         ])
       ]
@@ -52232,13 +52276,16 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   all: function all() {
-    return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/purchases');
+    return axios.get('/api/purchases');
   },
   find: function find(id) {
-    return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("/api/purchases/".concat(id));
+    return axios.get("/api/purchases/".concat(id));
   },
   update: function update(id, data) {
-    return axios__WEBPACK_IMPORTED_MODULE_0___default.a.put("/api/purchases/".concat(id), data);
+    return axios.put("/api/purchases/".concat(id), data);
+  },
+  "delete": function _delete(id) {
+    return axios["delete"]("/api/purchases/".concat(id));
   }
 });
 

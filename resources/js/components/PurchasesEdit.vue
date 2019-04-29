@@ -16,7 +16,9 @@
                 <input class="form-control mx-sm-6" id="purchase_amount" type="number" v-model="purchase.amount" min="1" step="1" />
             </div>
             <div class="form-group col-md-6">
-                <button class="btn btn-primary" type="submit" :disabled="saving">Update</button>
+                <button class="btn btn-outline-primary" type="submit" :disabled="saving">Update</button>
+                <button class="btn btn-outline-secondary" type="button" @click="$router.go(-1)">Cancel</button>
+                <button class="btn btn-outline-danger" :disabled="saving" @click.prevent="onDelete($event)">Delete</button>
             </div>
         </form>
     </div>
@@ -53,6 +55,15 @@
                 }).catch(error => {
                     console.log(error)
                 }).then(_ => this.saving = false);
+            },
+            onDelete() {
+                this.saving = true;
+
+                api.delete(this.purchase.id)
+                    .then((response) => {
+                        this.message = 'Item Deleted';
+                        setTimeout(() => this.$router.push({ name: 'purchases.index' }), 2000);
+                    });
             },
         },
         created() {

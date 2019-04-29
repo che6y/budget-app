@@ -107,6 +107,6 @@ class PurchasesController extends Controller
     {
         $purchase->delete();
 
-        return redirect('purchases' );
+        return response(null, 204);
     }
 }
