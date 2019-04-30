@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\PurchaseCollection;
 use App\Http\Resources\Purchase as PurchaseResource;
 use App\Purchase;
-use Carbon\Carbon;
+use Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -17,39 +17,37 @@ class PurchasesController extends Controller
      */
     public function index()
     {
-//        $date = Carbon::now('+7');
-//        $purchases = Purchase::where('created_at', '<', $date)->get();
-//        return view('purchases.index', compact('purchases'));
-        return new PurchaseCollection(Purchase::all());
-    }
+        $purchases = Purchase::orderBy('created_at', 'desc')
+            ->take(10)
+            ->get();
 
-    /**
-     * Show the form for creating a new purchase.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        return view('purchases.create' );
+        return new PurchaseCollection($purchases);
     }
 
     /**
      * Store a newly created purchase in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return PurchaseResource
      */
-    public function store()
+    public function store( Request $request )
     {
-        request()->validate( [
-            'title' => 'required|min:3|max:255',
-            'description' => 'required|min:3|max:255',
-            'amount' =>'numeric',
-            'cost' =>'required|numeric'
-        ]);
+//        if (Auth::user())
+//        {
+//            $user_id = Auth::user()->id;
 
-        Purchase::create( request( ['title', 'description', 'cost', 'amount', 'user']) );
-        return redirect('purchases' );
+            $data =[
+                'title'  => $request->title,
+                'amount' => $request->amount,
+                'cost'   => $request->cost,
+                'user'   => 1,
+                'description' => 'descr',
+            ];
+            $purchase = Purchase::create(
+                $data
+            );
+            return new PurchaseResource($purchase);
+//        }
     }
 
     /**
@@ -83,12 +81,10 @@ class PurchasesController extends Controller
      */
     public function update( Purchase $purchase, Request $request )
     {
-//        $purchase->update( request(['title', 'description', 'cost', 'amount']));
-//        return redirect('purchases' );
         $data = $request->validate([
-            'title' => 'required',
-            'cost' => 'required',
-            'amount' => 'required'
+            'title'  => 'required|min:3|max:255',
+            'amount' =>'numeric',
+            'cost'   =>'required|numeric'
         ]);
 
         $purchase->update($data);

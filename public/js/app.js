@@ -1813,6 +1813,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -1886,6 +1888,36 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _api_purchases__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../api/purchases */ "./resources/js/api/purchases.js");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -1905,12 +1937,21 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      message: null,
       loading: false,
+      saving: false,
       purchases: null,
-      error: null
+      error: null,
+      purchase: {
+        id: null,
+        title: "",
+        cost: "",
+        amount: 1
+      }
     };
   },
   created: function created() {
@@ -1928,6 +1969,32 @@ __webpack_require__.r(__webpack_exports__);
       })["catch"](function (error) {
         _this.loading = false;
         _this.error = error.response.data.message || error.message;
+      });
+    },
+    onSubmit: function onSubmit(event) {
+      var _this2 = this;
+
+      this.saving = true;
+      _api_purchases__WEBPACK_IMPORTED_MODULE_1__["default"].post({
+        title: this.purchase.title,
+        cost: this.purchase.cost,
+        amount: this.purchase.amount
+      }).then(function (response) {
+        _this2.message = 'Purchase Added';
+        setTimeout(function () {
+          return _this2.message = null;
+        }, 1500);
+
+        _this2.purchases.unshift(response.data.data);
+
+        _this2.purchase.title = '';
+        _this2.purchase.cost = '';
+        _this2.purchase.amount = 1;
+      })["catch"](function (error) {
+        console.log(error);
+        _this2.error = 'Something went wrong, please try again later';
+      }).then(function (_) {
+        return _this2.saving = false;
       });
     }
   }
@@ -37260,10 +37327,194 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", [
     _vm.message
-      ? _c("div", { staticClass: "alert" }, [_vm._v(_vm._s(_vm.message))])
+      ? _c(
+          "div",
+          { staticClass: "alert alert-success", attrs: { role: "alert" } },
+          [_vm._v(_vm._s(_vm.message))]
+        )
       : _vm._e(),
     _vm._v(" "),
     !_vm.loaded ? _c("div", [_vm._v("Loading...")]) : _vm._e(),
+    _vm._v(" "),
+    _c(
+      "form",
+      {
+        staticClass: "form-row justify-content-start",
+        on: {
+          submit: function($event) {
+            $event.preventDefault()
+            return _vm.onSubmit($event)
+          }
+        }
+      },
+      [
+        _c("div", { staticClass: "form-group col-md-6" }, [
+          _c("label", { attrs: { for: "purchase_title" } }, [_vm._v("Title")]),
+          _vm._v(" "),
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.purchase.title,
+                expression: "purchase.title"
+              }
+            ],
+            staticClass: "form-control",
+            attrs: { id: "purchase_title", required: "" },
+            domProps: { value: _vm.purchase.title },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.$set(_vm.purchase, "title", $event.target.value)
+              }
+            }
+          })
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "form-group col-md-3" }, [
+          _c("label", { attrs: { for: "purchase_cost" } }, [_vm._v("Price")]),
+          _vm._v(" "),
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.purchase.cost,
+                expression: "purchase.cost"
+              }
+            ],
+            staticClass: "form-control",
+            attrs: { id: "purchase_cost", type: "number", required: "" },
+            domProps: { value: _vm.purchase.cost },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.$set(_vm.purchase, "cost", $event.target.value)
+              }
+            }
+          })
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "form-group col-md-3" }, [
+          _c("label", { attrs: { for: "purchase_amount" } }, [
+            _vm._v("Amount")
+          ]),
+          _vm._v(" "),
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.purchase.amount,
+                expression: "purchase.amount"
+              }
+            ],
+            staticClass: "form-control mx-sm-6",
+            attrs: {
+              id: "purchase_amount",
+              type: "number",
+              min: "1",
+              step: "1",
+              required: ""
+            },
+            domProps: { value: _vm.purchase.amount },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.$set(_vm.purchase, "amount", $event.target.value)
+              }
+            }
+          })
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "form-group col-md-8" }, [
+          _c(
+            "button",
+            {
+              staticClass: "btn btn-outline-primary",
+              attrs: { type: "submit", disabled: _vm.saving }
+            },
+            [_vm._v("\n                Update\n            ")]
+          ),
+          _vm._v(" "),
+          _c(
+            "button",
+            {
+              staticClass: "btn btn-outline-secondary",
+              attrs: { type: "button" },
+              on: {
+                click: function($event) {
+                  return _vm.$router.go(-1)
+                }
+              }
+            },
+            [_vm._v("Cancel")]
+          ),
+          _vm._v(" "),
+          _c(
+            "button",
+            {
+              staticClass: "btn btn-outline-danger",
+              attrs: { disabled: _vm.saving },
+              on: {
+                click: function($event) {
+                  $event.preventDefault()
+                  return _vm.onDelete($event)
+                }
+              }
+            },
+            [_vm._v("Delete")]
+          )
+        ])
+      ]
+    )
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/PurchasesIndex.vue?vue&type=template&id=e00b78ea&":
+/*!*****************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/PurchasesIndex.vue?vue&type=template&id=e00b78ea& ***!
+  \*****************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "purchases" }, [
+    _vm.message
+      ? _c(
+          "div",
+          { staticClass: "alert alert-success", attrs: { role: "alert" } },
+          [_vm._v(_vm._s(_vm.message))]
+        )
+      : _vm._e(),
+    _vm._v(" "),
+    _vm.error
+      ? _c(
+          "div",
+          { staticClass: "alert alert-danger", attrs: { role: "alert" } },
+          [_vm._v("\n        " + _vm._s(_vm.error) + "\n    ")]
+        )
+      : _vm._e(),
     _vm._v(" "),
     _c(
       "form",
@@ -37369,108 +37620,64 @@ var render = function() {
               staticClass: "btn btn-outline-primary",
               attrs: { type: "submit", disabled: _vm.saving }
             },
-            [_vm._v("Update")]
-          ),
-          _vm._v(" "),
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-outline-secondary",
-              attrs: { type: "button" },
-              on: {
-                click: function($event) {
-                  return _vm.$router.go(-1)
-                }
-              }
-            },
-            [_vm._v("Cancel")]
-          ),
-          _vm._v(" "),
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-outline-danger",
-              attrs: { disabled: _vm.saving },
-              on: {
-                click: function($event) {
-                  $event.preventDefault()
-                  return _vm.onDelete($event)
-                }
-              }
-            },
-            [_vm._v("Delete")]
+            [_vm._v("Create")]
           )
         ])
       ]
-    )
-  ])
-}
-var staticRenderFns = []
-render._withStripped = true
-
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/PurchasesIndex.vue?vue&type=template&id=e00b78ea&":
-/*!*****************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/PurchasesIndex.vue?vue&type=template&id=e00b78ea& ***!
-  \*****************************************************************************************************************************************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "purchases" }, [
-    _vm.loading
-      ? _c("div", { staticClass: "loading" }, [
-          _vm._v("\n        Loading...\n    ")
-        ])
-      : _vm._e(),
-    _vm._v(" "),
-    _vm.error
-      ? _c("div", { staticClass: "error" }, [
-          _vm._v("\n        " + _vm._s(_vm.error) + "\n    ")
-        ])
-      : _vm._e(),
+    ),
     _vm._v(" "),
     _vm.purchases
       ? _c(
           "ul",
           { staticClass: "list-group" },
           _vm._l(_vm.purchases, function(purchase) {
-            return _c(
-              "li",
-              { staticClass: "list-group-item" },
-              [
-                _vm._v(
-                  "\n            " +
-                    _vm._s(purchase.title) +
-                    " " +
-                    _vm._s(purchase.cost * purchase.amount) +
-                    " baht\n            "
-                ),
+            return _c("li", { staticClass: "list-group-item" }, [
+              _c("div", { staticClass: "row justify-content-end" }, [
+                _c("div", { staticClass: "col-sm-3 col-4" }, [
+                  _vm._v(
+                    "\n                    " +
+                      _vm._s(purchase.cost * purchase.amount) +
+                      " baht\n                "
+                  )
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "col-sm-4 col-4" }, [
+                  _vm._v(
+                    "\n                    " +
+                      _vm._s(purchase.title) +
+                      "\n                "
+                  )
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "col-sm-3 col-4" }, [
+                  _vm._v(
+                    "\n                    " +
+                      _vm._s(purchase.created_at) +
+                      "\n                "
+                  )
+                ]),
+                _vm._v(" "),
                 _c(
-                  "router-link",
-                  {
-                    attrs: {
-                      to: {
-                        name: "purchases.edit",
-                        params: { purchase: purchase.id }
-                      }
-                    }
-                  },
-                  [_vm._v("Edit")]
+                  "div",
+                  { staticClass: "col-sm-2 col-4 " },
+                  [
+                    _c(
+                      "router-link",
+                      {
+                        attrs: {
+                          to: {
+                            name: "purchases.edit",
+                            params: { purchase: purchase.id }
+                          }
+                        }
+                      },
+                      [_vm._v("Edit")]
+                    )
+                  ],
+                  1
                 )
-              ],
-              1
-            )
+              ])
+            ])
           }),
           0
         )
@@ -52280,6 +52487,9 @@ __webpack_require__.r(__webpack_exports__);
   },
   find: function find(id) {
     return axios.get("/api/purchases/".concat(id));
+  },
+  post: function post(data) {
+    return axios.post("/api/purchases/", data);
   },
   update: function update(id, data) {
     return axios.put("/api/purchases/".concat(id), data);

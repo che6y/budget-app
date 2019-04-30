@@ -14,6 +14,7 @@ class Purchase extends JsonResource
      */
     public function toArray($request)
     {
+        $this->created_at = date('j M y', strtotime($this->created_at));
         return [
             'id'         => $this->id,
             'title'      => $this->title,

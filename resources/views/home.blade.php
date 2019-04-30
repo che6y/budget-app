@@ -4,7 +4,9 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <app></app>
+            <?php if (Auth::check()): ?>
+                <app></app>
+           <?php endif; ?>
         </div>
     </div>
 </div>
