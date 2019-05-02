@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Resources\PurchaseCollection;
 use App\Http\Resources\Purchase as PurchaseResource;
 use App\Purchase;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-class PurchasesController extends Controller
+class PurchaseController extends Controller
 {
     /**
      * Display a listing of the purchases.
@@ -32,22 +32,19 @@ class PurchasesController extends Controller
      */
     public function store( Request $request )
     {
-//        if (Auth::user())
-//        {
-//            $user_id = Auth::user()->id;
-
-            $data =[
-                'title'  => $request->title,
-                'amount' => $request->amount,
-                'cost'   => $request->cost,
-                'user'   => 1,
+            $id = Auth::id();
+            $data = $request->validate([
+                'title'       => 'required|min:3|max:255',
+                'amount'      => 'required|numeric',
+                'cost'        => 'required|numeric',
                 'description' => 'descr',
-            ];
+            ]);
+            $data['user_id'] = $id;
+
             $purchase = Purchase::create(
                 $data
             );
             return new PurchaseResource($purchase);
-//        }
     }
 
     /**
@@ -59,17 +56,6 @@ class PurchasesController extends Controller
     public function show(Purchase $purchase)
     {
         return new PurchaseResource($purchase);
-    }
-
-    /**
-     * Show the form for editing the specified purchase.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Purchase $purchase)
-    {
-        return view('purchases.edit', compact('purchase') );
     }
 
     /**

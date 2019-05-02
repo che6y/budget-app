@@ -21,7 +21,6 @@ class Purchase extends JsonResource
             'cost'       => $this->cost,
             'amount'     => $this->amount,
             'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
         ];
     }
 }

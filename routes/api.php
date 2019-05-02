@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Http\Request;
-use App\Purchase;
-use App\Http\Resources\PurchaseCollection;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,11 +17,16 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-//Route::get('/purchases', function () {
-//    return new PurchaseCollection(Purchase::all());
-//});
-Route::get('/purchases', 'PurchasesController@index');
-Route::get('/purchases/{purchase}', 'PurchasesController@show');
-Route::put('/purchases/{purchase}', 'PurchasesController@update');
-Route::post('/purchases/', 'PurchasesController@store');
-Route::delete('/purchases/{purchase}', 'PurchasesController@destroy');
+// Purchases
+Route::get('/purchases', 'PurchaseController@index');
+Route::get('/purchases/{purchase}', 'PurchaseController@show');
+Route::put('/purchases/{purchase}', 'PurchaseController@update');
+Route::post('/purchases/', 'PurchaseController@store');
+Route::delete('/purchases/{purchase}', 'PurchaseController@destroy');
+
+// Category
+Route::get('/categories', 'CategoryController@index');
+Route::get('/categories/{category}', 'CategoryController@show');
+Route::put('/categories/{category}', 'CategoryController@update');
+Route::post('/categories/', 'CategoryController@store');
+Route::delete('/categories/{category}', 'CategoryController@destroy');
