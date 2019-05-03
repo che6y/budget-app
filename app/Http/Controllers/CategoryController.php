@@ -32,6 +32,7 @@ class CategoryController extends Controller
     {
         $data = $request->validate([
             'title' => 'required|min:3|max:255',
+            'icon'  => 'min:1|max:50'
         ]);
         $category = Category::create( $data );
 
@@ -59,9 +60,8 @@ class CategoryController extends Controller
     public function update( Category $category, Request $request )
     {
         $data = $request->validate([
-            'title'  => 'required|min:3|max:255',
-            'amount' =>'numeric',
-            'cost'   =>'required|numeric'
+            'title' => 'required|min:3|max:255',
+            'icon'  => 'min:1|max:50'
         ]);
 
         $category->update( $data );

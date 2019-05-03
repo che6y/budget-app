@@ -11,6 +11,16 @@ class Purchase extends Model
         'description',
         'amount',
         'cost',
-        'user'
+        'user_id',
+        'category_id',
     ];
+
+    /**
+     * Get the category that owns the purchase.
+     */
+    public function category()
+    {
+        return $this->belongsTo('App\Category');
+    }
+
 }

@@ -25,18 +25,24 @@
             </div>
         </form>
 
-        <div class="btn-group categories-list" role="group" aria-label="Basic example">
-            <button v-for="category in categories" v-on:click="onCategoryClick( category.id, category.title )" type="button" class="btn btn-outline-info">{{ category.title }}</button>
+        <div class="btn-group categories-list" role="group">
+            <button v-for="category in categories" v-on:click="onCategoryClick( category.id, category.title, category.icon )" type="button" class="btn btn-outline-info">{{ category.title }}
+                <i v-if="category.icon" class="fas" v-bind:class="[category.icon ? 'fa-' + category.icon : '']"></i>
+            </button>
         </div>
+        <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#add-category-form">
+            <i class="fas fa-plus"></i>
+        </button>
 
 
-        <ul v-if="purchases"class="list-group">
+        <ul v-if="purchases" class="list-group">
             <li v-for="purchase in purchases" class="list-group-item">
                 <div class="row justify-content-end">
                     <div class="col-sm-3 col-4">
                         {{ purchase.cost * purchase.amount }} baht
                     </div>
                     <div class="col-sm-4 col-4">
+                        <i v-if="purchase.icon" class="fas" v-bind:class="[purchase.icon ? 'fa-' + purchase.icon : '']"></i>
                         {{ purchase.title }}
                     </div>
                     <div class="col-sm-3 col-4">
@@ -48,6 +54,46 @@
                 </div>
             </li>
         </ul>
+
+        <!-- Modal -->
+        <div class="modal fade" id="add-category-form" tabindex="-1" role="dialog" aria-labelledby="modal-title" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modal-title">Add new category</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div v-if="categoryFormError" class="alert alert-danger" role="alert">
+                            {{ categoryFormError }}
+                        </div>
+                        <form class="form-row justify-content-start" @submit.prevent="onCategorySubmit($event)">
+                            <div class="form-group col-md-6">
+                                <label for="category-title">Category Name</label>
+                                <input class="form-control" id="category-title" v-model="category.title" />
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="category-icon">Choose icon</label>
+                                <input class="form-control" id="category-icon" type="hidden" v-model="category.icon" />
+
+                                <div class="btn-group icons-list" role="group">
+                                    <button v-for="icon in icons" v-on:click="onIconClick( icon )" type="button" class="btn btn-outline-info">
+                                        <i class="fas" v-bind:class="[ 'fa-' + icon]"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-outline-primary" >Add</button>
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </template>
 <script>
@@ -59,20 +105,25 @@
             return {
                 message: null,
                 error: null,
+                categoryFormError: null,
                 loading: false,
                 saving: false,
+                // create: false,
                 purchases: null,
+                icons: ['coffee','home', 'egg', 'sad-cry', 'skiing', 'tshirt', 'wallet', 'tv', 'lightbulb', 'heartbeat'],
                 purchase: {
                     id: null,
                     title: "",
                     cost: "",
                     amount: 1,
+                    icon: null,
                     category_id: null,
                 },
                 categories: null,
                 category: {
                     id: null,
                     title: "",
+                    icon: null
                 },
             };
         },
@@ -114,6 +165,7 @@
                     title: this.purchase.title,
                     cost: this.purchase.cost,
                     amount: this.purchase.amount,
+                    category_id: this.purchase.category_id,
                 }).then((response) => {
                     this.message = 'Purchase Added';
                     setTimeout(() => this.message = null, 1500);
@@ -126,9 +178,30 @@
                     setTimeout(() => this.error = null, 1500);
                 }).then(_ => this.saving = false);
             },
-            onCategoryClick( categoryID, categoryTitle ) {
-                this.purchase.title = categoryTitle;
+            onCategorySubmit(event) {
+                api.post( {
+                    title: this.purchase.title,
+                    cost: this.purchase.cost,
+                    amount: this.purchase.amount,
+                    category_id: this.purchase.category_id,
+                }).then((response) => {
+                    this.message = 'Category Added';
+                    setTimeout(() => this.message = null, 1500);
+                    this.purchases.unshift(response.data.data);
+                    this.purchase.title = '';
+                    this.purchase.cost = '';
+                    this.purchase.amount = 1;
+                }).catch(error => {
+                    this.categoryFormError = 'Something went wrong, please try again later'
+                    setTimeout(() => this.categoryFormError = null, 1500);
+                });
+            },
+            onCategoryClick( categoryID, categoryTitle, categoryIcon ) {
+                if (this.purchase.title === "") {
+                    this.purchase.title = categoryTitle;
+                }
                 this.purchase.category_id = categoryID;
+                this.purchase.icon = categoryIcon;
             },
 
         }

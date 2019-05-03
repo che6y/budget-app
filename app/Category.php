@@ -8,5 +8,14 @@ class Category extends Model
 {
     protected $fillable = [
         'title',
+        'icon'
     ];
+
+    /**
+     * Get the purchases for the category.
+     */
+    public function purchases()
+    {
+        return $this->hasMany('App\Purchase');
+    }
 }

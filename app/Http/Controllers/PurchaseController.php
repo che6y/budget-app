@@ -69,8 +69,8 @@ class PurchaseController extends Controller
     {
         $data = $request->validate([
             'title'       => 'required|min:3|max:255',
-            'amount'      =>'numeric',
-            'cost'        =>'required|numeric',
+            'amount'      => 'numeric',
+            'cost'        => 'required|numeric',
             'category_id' => 'required|numeric',
         ]);
 

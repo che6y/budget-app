@@ -15,6 +15,7 @@ class Purchase extends JsonResource
     public function toArray($request)
     {
         $this->created_at = date('j M y', strtotime($this->created_at));
+        $this->icon = $this->category->icon;
         return [
             'id'         => $this->id,
             'title'      => $this->title,
@@ -23,6 +24,7 @@ class Purchase extends JsonResource
             'user_id'    => $this->user_id,
             'category_id'=> $this->category_id,
             'created_at' => $this->created_at,
+            'icon'       => $this->icon,
         ];
     }
 }
