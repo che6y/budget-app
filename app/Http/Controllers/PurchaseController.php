@@ -37,7 +37,7 @@ class PurchaseController extends Controller
                 'title'       => 'required|min:3|max:255',
                 'amount'      => 'required|numeric',
                 'cost'        => 'required|numeric',
-                'description' => 'descr',
+                'category_id' => 'required|numeric',
             ]);
             $data['user_id'] = $id;
 
@@ -68,9 +68,10 @@ class PurchaseController extends Controller
     public function update( Purchase $purchase, Request $request )
     {
         $data = $request->validate([
-            'title'  => 'required|min:3|max:255',
-            'amount' =>'numeric',
-            'cost'   =>'required|numeric'
+            'title'       => 'required|min:3|max:255',
+            'amount'      =>'numeric',
+            'cost'        =>'required|numeric',
+            'category_id' => 'required|numeric',
         ]);
 
         $purchase->update($data);

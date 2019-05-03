@@ -18,18 +18,23 @@
             <div class="form-group col-md-3">
                 <label for="purchase_amount">Amount</label>
                 <input class="form-control mx-sm-6" id="purchase_amount" v-model="purchase.amount" type="number" min="1" step="1" />
+                <input v-model="purchase.category_id" type="hidden" />
             </div>
             <div class="form-group col-md-6">
                 <button class="btn btn-outline-primary" type="submit" :disabled="saving">Create</button>
             </div>
         </form>
 
+        <div class="btn-group categories-list" role="group" aria-label="Basic example">
+            <button v-for="category in categories" v-on:click="onCategoryClick( category.id, category.title )" type="button" class="btn btn-outline-info">{{ category.title }}</button>
+        </div>
+
 
         <ul v-if="purchases"class="list-group">
             <li v-for="purchase in purchases" class="list-group-item">
                 <div class="row justify-content-end">
                     <div class="col-sm-3 col-4">
-                        {{ purchase.cost * purchase.amount}} baht
+                        {{ purchase.cost * purchase.amount }} baht
                     </div>
                     <div class="col-sm-4 col-4">
                         {{ purchase.title }}
@@ -53,23 +58,30 @@
         data() {
             return {
                 message: null,
+                error: null,
                 loading: false,
                 saving: false,
                 purchases: null,
-                error: null,
                 purchase: {
                     id: null,
                     title: "",
                     cost: "",
-                    amount: 1
-                }
+                    amount: 1,
+                    category_id: null,
+                },
+                categories: null,
+                category: {
+                    id: null,
+                    title: "",
+                },
             };
         },
         created() {
-            this.fetchData();
+            this.fetchPurchaseData();
+            this.fetchCategoryData();
         },
         methods: {
-            fetchData() {
+            fetchPurchaseData() {
                 this.error = this.purchases = null;
                 this.loading = true;
                 axios
@@ -80,6 +92,19 @@
                     }).catch(error => {
                         this.loading = false;
                         this.error = error.response.data.message || error.message;
+                    });
+            },
+            fetchCategoryData() {
+                this.error = this.categories = null;
+                this.loading = true;
+                axios
+                    .get( '/api/categories' )
+                    .then( response => {
+                        this.loading = false;
+                        this.categories = response.data.data;
+                    }).catch( error => {
+                        this.loading = false;
+                    this.error = error.response.data.message || error.message;
                     });
             },
             onSubmit(event) {
@@ -97,10 +122,21 @@
                     this.purchase.cost = '';
                     this.purchase.amount = 1;
                 }).catch(error => {
-                    console.log(error);
-                    this.error = 'Something went wrong, please try again later';
+                    this.error = 'Something went wrong, please try again later'
+                    setTimeout(() => this.error = null, 1500);
                 }).then(_ => this.saving = false);
             },
+            onCategoryClick( categoryID, categoryTitle ) {
+                this.purchase.title = categoryTitle;
+                this.purchase.category_id = categoryID;
+            },
+
         }
     }
 </script>
+
+<style scoped>
+    .categories-list {
+        margin: 30px 0;
+    }
+</style>

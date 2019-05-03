@@ -20,6 +20,8 @@ class Purchase extends JsonResource
             'title'      => $this->title,
             'cost'       => $this->cost,
             'amount'     => $this->amount,
+            'user_id'    => $this->user_id,
+            'category_id'=> $this->category_id,
             'created_at' => $this->created_at,
         ];
     }

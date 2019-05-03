@@ -19,7 +19,8 @@ class CreatePurchasesTable extends Migration
             $table->text('description');
             $table->integer('amount');
             $table->integer('cost');
-            $table->integer('user');
+            $table->integer('user_id');
+            $table->integer('category_id');
             $table->timestamps();
         });
     }
