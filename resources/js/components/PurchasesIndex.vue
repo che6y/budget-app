@@ -7,6 +7,7 @@
         </div>
 
         <form class="form-row justify-content-start" @submit.prevent="onSubmit($event)">
+            <input v-model="purchase.cat_id" type="hidden" />
             <div class="form-group col-md-6">
                 <label for="purchase_title">Title</label>
                 <input class="form-control" id="purchase_title" v-model="purchase.title" />
@@ -18,7 +19,6 @@
             <div class="form-group col-md-3">
                 <label for="purchase_amount">Amount</label>
                 <input class="form-control mx-sm-6" id="purchase_amount" v-model="purchase.amount" type="number" min="1" step="1" />
-                <input v-model="purchase.category_id" type="hidden" />
             </div>
             <div class="form-group col-md-6">
                 <button class="btn btn-outline-primary" type="submit" :disabled="saving">Create</button>
@@ -26,7 +26,7 @@
         </form>
 
         <div class="flex-wrap categories-list" role="group">
-            <button v-for="category in categories" v-on:click="onCategoryClick( category.id, category.title,
+            <button v-for="category in categories" v-on:click="onCategoryClick( $event, category.id, category.title,
             category.icon )" type="button" class="btn btn-outline-info btn-sm">{{ category.title }}
                 <i v-if="category.icon" class="fas" v-bind:class="[category.icon ? 'fa-' + category.icon : '']"></i>
             </button>
@@ -72,7 +72,7 @@
                     </div>
                 </div>
             </li>
-            <li class="list-group-item list-group-item-info">Yesterday</li>
+            <li class="list-group-item list-group-item-info"></li>
             <li v-for="purchase in purchases" class="list-group-item list-group-item-action" v-if="purchase.isToday
             === false">
                 <div class="row justify-content-end">
@@ -170,7 +170,7 @@
                     cost: "",
                     amount: 1,
                     icon: null,
-                    category_id: null,
+                    cat_id: null,
                 },
                 purchase_id: null,
                 categories: null,
@@ -225,11 +225,13 @@
                     title: this.purchase.title,
                     cost: this.purchase.cost,
                     amount: this.purchase.amount,
-                    category_id: this.purchase.category_id,
+                    category_id: this.purchase.cat_id,
                 }).then( (response) => {
                     this.message = 'Purchase Added';
                     setTimeout(() => this.message = null, 1500);
-                    this.purchases.unshift(response.data.data);
+                    var purchase_arr = response.data.data;
+                    purchase_arr['isToday'] = true;
+                    this.purchases.unshift(purchase_arr);
                     this.purchase.title = '';
                     this.purchase.cost = '';
                     this.purchase.amount = 1;
@@ -254,12 +256,15 @@
                     setTimeout(() => this.categoryFormError = null, 1500);
                 });
             },
-            onCategoryClick( categoryID, categoryTitle, categoryIcon ) {
-                if (this.purchase.title === "") {
-                    this.purchase.title = categoryTitle;
-                }
-                this.purchase.category_id = categoryID;
-                this.purchase.icon = categoryIcon;
+            onCategoryClick( event, categoryID, categoryTitle, categoryIcon ) {
+                this.purchase.title  = categoryTitle;
+                this.purchase.cat_id = categoryID;
+                this.purchase.icon   = categoryIcon;
+                $( event.target )
+                    .closest('button')
+                    .addClass('active')
+                    .siblings()
+                    .removeClass('active');
             },
             onIconClick ( event, icon ) {
                 this.category.icon = icon;
@@ -269,12 +274,8 @@
                     .siblings()
                     .removeClass('active');
             },
-            rotateIcon(event) {
-                $( event.target ).children('i').addClass('fa-rotate-90');
-            },
             onDelete( event, id ) {
                 this.saving = true;
-
                 $(event.target).closest('.list-group-item').hide();
                 purchases_api.delete( id )
                     .then(( response ) => {

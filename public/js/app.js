@@ -2059,7 +2059,7 @@ var moment = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js"
         cost: "",
         amount: 1,
         icon: null,
-        category_id: null
+        cat_id: null
       },
       purchase_id: null,
       categories: null,
@@ -2115,14 +2115,16 @@ var moment = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js"
         title: this.purchase.title,
         cost: this.purchase.cost,
         amount: this.purchase.amount,
-        category_id: this.purchase.category_id
+        category_id: this.purchase.cat_id
       }).then(function (response) {
         _this3.message = 'Purchase Added';
         setTimeout(function () {
           return _this3.message = null;
         }, 1500);
+        var purchase_arr = response.data.data;
+        purchase_arr['isToday'] = true;
 
-        _this3.purchases.unshift(response.data.data);
+        _this3.purchases.unshift(purchase_arr);
 
         _this3.purchase.title = '';
         _this3.purchase.cost = '';
@@ -2160,20 +2162,15 @@ var moment = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js"
         }, 1500);
       });
     },
-    onCategoryClick: function onCategoryClick(categoryID, categoryTitle, categoryIcon) {
-      if (this.purchase.title === "") {
-        this.purchase.title = categoryTitle;
-      }
-
-      this.purchase.category_id = categoryID;
+    onCategoryClick: function onCategoryClick(event, categoryID, categoryTitle, categoryIcon) {
+      this.purchase.title = categoryTitle;
+      this.purchase.cat_id = categoryID;
       this.purchase.icon = categoryIcon;
+      $(event.target).closest('button').addClass('active').siblings().removeClass('active');
     },
     onIconClick: function onIconClick(event, icon) {
       this.category.icon = icon;
       $(event.target).closest('button').addClass('active').siblings().removeClass('active');
-    },
-    rotateIcon: function rotateIcon(event) {
-      $(event.target).children('i').addClass('fa-rotate-90');
     },
     onDelete: function onDelete(event, id) {
       var _this5 = this;
@@ -55973,6 +55970,27 @@ var render = function() {
         }
       },
       [
+        _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.purchase.cat_id,
+              expression: "purchase.cat_id"
+            }
+          ],
+          attrs: { type: "hidden" },
+          domProps: { value: _vm.purchase.cat_id },
+          on: {
+            input: function($event) {
+              if ($event.target.composing) {
+                return
+              }
+              _vm.$set(_vm.purchase, "cat_id", $event.target.value)
+            }
+          }
+        }),
+        _vm._v(" "),
         _c("div", { staticClass: "form-group col-md-6" }, [
           _c("label", { attrs: { for: "purchase_title" } }, [_vm._v("Title")]),
           _vm._v(" "),
@@ -56055,27 +56073,6 @@ var render = function() {
                 _vm.$set(_vm.purchase, "amount", $event.target.value)
               }
             }
-          }),
-          _vm._v(" "),
-          _c("input", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.purchase.category_id,
-                expression: "purchase.category_id"
-              }
-            ],
-            attrs: { type: "hidden" },
-            domProps: { value: _vm.purchase.category_id },
-            on: {
-              input: function($event) {
-                if ($event.target.composing) {
-                  return
-                }
-                _vm.$set(_vm.purchase, "category_id", $event.target.value)
-              }
-            }
           })
         ]),
         _vm._v(" "),
@@ -56105,6 +56102,7 @@ var render = function() {
               on: {
                 click: function($event) {
                   return _vm.onCategoryClick(
+                    $event,
                     category.id,
                     category.title,
                     category.icon
@@ -56264,9 +56262,7 @@ var render = function() {
                 : _vm._e()
             }),
             _vm._v(" "),
-            _c("li", { staticClass: "list-group-item list-group-item-info" }, [
-              _vm._v("Yesterday")
-            ]),
+            _c("li", { staticClass: "list-group-item list-group-item-info" }),
             _vm._v(" "),
             _vm._l(_vm.purchases, function(purchase) {
               return purchase.isToday === false
