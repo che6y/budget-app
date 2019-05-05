@@ -60,7 +60,7 @@ class CategoryController extends Controller
     public function update( Category $category, Request $request )
     {
         $data = $request->validate([
-            'title' => 'required|min:3|max:255',
+            'title' => 'required|min:3|max:255|unique',
             'icon'  => 'min:1|max:50'
         ]);
 

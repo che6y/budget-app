@@ -26,30 +26,79 @@
         </form>
 
         <div class="flex-wrap categories-list" role="group">
-            <button v-for="category in categories" v-on:click="onCategoryClick( category.id, category.title, category.icon )" type="button" class="btn btn-outline-info">{{ category.title }}
+            <button v-for="category in categories" v-on:click="onCategoryClick( category.id, category.title,
+            category.icon )" type="button" class="btn btn-outline-info btn-sm">{{ category.title }}
                 <i v-if="category.icon" class="fas" v-bind:class="[category.icon ? 'fa-' + category.icon : '']"></i>
             </button>
+            <button class="btn btn-outline-info dropdown-toggle btn-sm" type="button" id="category-actions"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-plus"></i>
+            </button>
+            <div class="dropdown-menu" aria-labelledby="category-actions">
+                <router-link class="dropdown-item" :to="{ name: 'purchases.edit', params: { purchase: purchase.id } }">Edit</router-link>
+                <button class="dropdown-item" data-toggle="modal" data-target="#add-category-form" type="button">
+                    Add New
+                </button>
+            </div>
         </div>
-        <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#add-category-form">
-            <i class="fas fa-plus"></i>
-        </button>
-
 
         <ul v-if="purchases" class="list-group">
-            <li v-for="purchase in purchases" class="list-group-item">
+            <li class="list-group-item list-group-item-info">Today</li>
+            <li v-for="purchase in purchases" class="list-group-item list-group-item-action" v-if="purchase.isToday">
                 <div class="row justify-content-end">
                     <div class="col-sm-3 col-4">
                         {{ purchase.cost * purchase.amount }} baht
                     </div>
-                    <div class="col-sm-4 col-4">
+                    <div class="col-sm-5 col-4">
                         <i v-if="purchase.icon" class="fas" v-bind:class="[purchase.icon ? 'fa-' + purchase.icon : '']"></i>
                         {{ purchase.title }}
                     </div>
                     <div class="col-sm-3 col-4">
                         {{ purchase.created_at }}
                     </div>
-                    <div class="col-sm-2 col-4 ">
-                        <router-link :to="{ name: 'purchases.edit', params: { purchase: purchase.id } }">Edit</router-link>
+                    <div class="col-sm-1 col-4 ">
+                        <div class="dropdown">
+                            <button class="btn btn-outline-info dropdown-toggle btn-sm" type="button"
+                                    id="purchase-actions"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="purchase-actions">
+                                <router-link class="dropdown-item" :to="{ name: 'purchases.edit', params: { purchase: purchase.id } }">Edit</router-link>
+                                <button class="dropdown-item" :disabled="saving" @click.prevent="onDelete( $event,
+                                purchase.id )">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item list-group-item-info">Yesterday</li>
+            <li v-for="purchase in purchases" class="list-group-item list-group-item-action" v-if="purchase.isToday
+            === false">
+                <div class="row justify-content-end">
+                    <div class="col-sm-3 col-4">
+                        {{ purchase.cost * purchase.amount }} baht
+                    </div>
+                    <div class="col-sm-5 col-4">
+                        <i v-if="purchase.icon" class="fas" v-bind:class="[purchase.icon ? 'fa-' + purchase.icon : '']"></i>
+                        {{ purchase.title }}
+                    </div>
+                    <div class="col-sm-3 col-4">
+                        {{ purchase.created_at }}
+                    </div>
+                    <div class="col-sm-1 col-4 ">
+                        <div class="dropdown">
+                            <button class="btn btn-outline-info dropdown-toggle btn-sm" type="button"
+                                    id="purchase-actions"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="purchase-actions">
+                                <router-link class="dropdown-item" :to="{ name: 'purchases.edit', params: { purchase: purchase.id } }">Edit</router-link>
+                                <button class="dropdown-item" :disabled="saving" @click.prevent="onDelete( $event,
+                                purchase.id )">Delete</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </li>
@@ -79,7 +128,8 @@
                                 <input class="form-control" id="category-icon" type="hidden" v-model="category.icon" />
 
                                 <div class="flex-wrap icons-list" role="group">
-                                    <button v-for="icon in icons" v-on:click="onIconClick( icon )" type="button" class="btn btn-outline-info">
+                                    <button v-for="icon in icons" v-on:click="onIconClick( $event, icon )" type="button"
+                                            class="btn btn-outline-info" >
                                         <i class="fas" v-bind:class="[ 'fa-' + icon]"></i>
                                     </button>
                                 </div>
@@ -101,6 +151,8 @@
     import purchases_api from '../api/purchases';
     import categories_api from '../api/categories';
 
+    const moment = require('moment');
+
     export default {
         data() {
             return {
@@ -109,7 +161,6 @@
                 categoryFormError: null,
                 loading: false,
                 saving: false,
-                // create: false,
                 purchases: null,
                 icons: ['coffee','home', 'egg', 'sad-cry', 'skiing', 'tshirt', 'wallet', 'tv', 'lightbulb',
                     'heartbeat', 'gift'],
@@ -121,6 +172,7 @@
                     icon: null,
                     category_id: null,
                 },
+                purchase_id: null,
                 categories: null,
                 category: {
                     id: null,
@@ -140,8 +192,15 @@
                 axios
                     .get('/api/purchases')
                     .then(response => {
-                        this.loading = false;
+                        let now = new Date();
                         this.purchases = response.data.data;
+                        this.loading = false;
+
+                        for ( var i in this.purchases ){
+                            let date = moment( this.purchases[i]['created_at'] ).format('YYYY-MM-DD');
+                            this.purchases[i]['isToday'] = moment( date ).isSame( now, 'day' );
+                        }
+
                     }).catch(error => {
                         this.loading = false;
                         this.error = error.response.data.message || error.message;
@@ -157,7 +216,7 @@
                         this.categories = response.data.data;
                     }).catch( error => {
                         this.loading = false;
-                    this.error = error.response.data.message || error.message;
+                        this.error = error.response.data.message || error.message;
                     });
             },
             onSubmit( event ) {
@@ -175,7 +234,7 @@
                     this.purchase.cost = '';
                     this.purchase.amount = 1;
                 }).catch( error => {
-                    this.error = 'Something went wrong, please try again later'
+                    this.error = 'Something went wrong, please try again later';
                     setTimeout(() => this.error = null, 1500);
                 }).then(_ => this.saving = false);
             },
@@ -191,7 +250,7 @@
                     this.category.title = '';
                     this.category.icon = null;
                 }).catch( error => {
-                    this.categoryFormError = 'Something went wrong, please try again later'
+                    this.categoryFormError = 'Something went wrong, please try again later';
                     setTimeout(() => this.categoryFormError = null, 1500);
                 });
             },
@@ -202,8 +261,25 @@
                 this.purchase.category_id = categoryID;
                 this.purchase.icon = categoryIcon;
             },
-            onIconClick ( icon ) {
+            onIconClick ( event, icon ) {
                 this.category.icon = icon;
+                $( event.target )
+                    .closest('button')
+                    .addClass('active')
+                    .siblings()
+                    .removeClass('active');
+            },
+            rotateIcon(event) {
+                $( event.target ).children('i').addClass('fa-rotate-90');
+            },
+            onDelete( event, id ) {
+                this.saving = true;
+
+                $(event.target).closest('.list-group-item').hide();
+                purchases_api.delete( id )
+                    .then(( response ) => {
+                        this.message = 'Item Deleted';
+                    });
             },
         }
     }
@@ -212,5 +288,20 @@
 <style scoped>
     .categories-list {
         margin: 30px 0;
+    }
+    .dropdown-toggle::after {
+        display: none;
+    }
+    #purchase-actions.dropdown-toggle.btn-sm {
+        border: none;
+    }
+    .btn-outline-info:focus,
+    .btn-outline-info.focus {
+        box-shadow: none;
+    }
+    .active {
+        color: #212529;
+        background-color: #6cb2eb;
+        border-color: #6cb2eb;
     }
 </style>

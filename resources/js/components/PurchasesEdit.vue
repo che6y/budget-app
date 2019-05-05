@@ -1,7 +1,6 @@
 <template>
     <div>
         <div v-if="message" class="alert alert-success" role="alert">{{ message }}</div>
-<!--        <div v-if="! loaded">Loading...</div>-->
         <form class="form-row justify-content-start" @submit.prevent="onSubmit($event)">
             <div class="form-group col-md-6">
                 <label for="purchase_title">Title</label>
@@ -43,7 +42,7 @@
             };
         },
         methods: {
-            onSubmit(event) {
+            onSubmit( event ) {
                 this.saving = true;
 
                 api.update(this.purchase.id, {
