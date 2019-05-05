@@ -25,7 +25,7 @@
             </div>
         </form>
 
-        <div class="btn-group categories-list" role="group">
+        <div class="flex-wrap categories-list" role="group">
             <button v-for="category in categories" v-on:click="onCategoryClick( category.id, category.title, category.icon )" type="button" class="btn btn-outline-info">{{ category.title }}
                 <i v-if="category.icon" class="fas" v-bind:class="[category.icon ? 'fa-' + category.icon : '']"></i>
             </button>
@@ -74,21 +74,21 @@
                                 <label for="category-title">Category Name</label>
                                 <input class="form-control" id="category-title" v-model="category.title" />
                             </div>
-                            <div class="form-group col-md-3">
+                            <div class="form-group col-md-6">
                                 <label for="category-icon">Choose icon</label>
                                 <input class="form-control" id="category-icon" type="hidden" v-model="category.icon" />
 
-                                <div class="btn-group icons-list" role="group">
+                                <div class="flex-wrap icons-list" role="group">
                                     <button v-for="icon in icons" v-on:click="onIconClick( icon )" type="button" class="btn btn-outline-info">
                                         <i class="fas" v-bind:class="[ 'fa-' + icon]"></i>
                                     </button>
                                 </div>
                             </div>
+                            <div class="form-group col-md-6">
+                                <button type="submit" class="btn btn-outline-primary" >Add</button>
+                                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                            </div>
                         </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-outline-primary" >Add</button>
-                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -98,7 +98,8 @@
 </template>
 <script>
     import axios from 'axios';
-    import api from '../api/purchases';
+    import purchases_api from '../api/purchases';
+    import categories_api from '../api/categories';
 
     export default {
         data() {
@@ -110,7 +111,8 @@
                 saving: false,
                 // create: false,
                 purchases: null,
-                icons: ['coffee','home', 'egg', 'sad-cry', 'skiing', 'tshirt', 'wallet', 'tv', 'lightbulb', 'heartbeat'],
+                icons: ['coffee','home', 'egg', 'sad-cry', 'skiing', 'tshirt', 'wallet', 'tv', 'lightbulb',
+                    'heartbeat', 'gift'],
                 purchase: {
                     id: null,
                     title: "",
@@ -158,40 +160,37 @@
                     this.error = error.response.data.message || error.message;
                     });
             },
-            onSubmit(event) {
+            onSubmit( event ) {
                 this.saving = true;
-
-                api.post( {
+                purchases_api.post( {
                     title: this.purchase.title,
                     cost: this.purchase.cost,
                     amount: this.purchase.amount,
                     category_id: this.purchase.category_id,
-                }).then((response) => {
+                }).then( (response) => {
                     this.message = 'Purchase Added';
                     setTimeout(() => this.message = null, 1500);
                     this.purchases.unshift(response.data.data);
                     this.purchase.title = '';
                     this.purchase.cost = '';
                     this.purchase.amount = 1;
-                }).catch(error => {
+                }).catch( error => {
                     this.error = 'Something went wrong, please try again later'
                     setTimeout(() => this.error = null, 1500);
                 }).then(_ => this.saving = false);
             },
-            onCategorySubmit(event) {
-                api.post( {
-                    title: this.purchase.title,
-                    cost: this.purchase.cost,
-                    amount: this.purchase.amount,
-                    category_id: this.purchase.category_id,
-                }).then((response) => {
+            onCategorySubmit( event ) {
+                categories_api.post( {
+                    title: this.category.title,
+                    icon: this.category.icon,
+                }).then( (response) => {
+                    $('#add-category-form').modal('hide')
                     this.message = 'Category Added';
                     setTimeout(() => this.message = null, 1500);
-                    this.purchases.unshift(response.data.data);
-                    this.purchase.title = '';
-                    this.purchase.cost = '';
-                    this.purchase.amount = 1;
-                }).catch(error => {
+                    this.categories.unshift(response.data.data);
+                    this.category.title = '';
+                    this.category.icon = null;
+                }).catch( error => {
                     this.categoryFormError = 'Something went wrong, please try again later'
                     setTimeout(() => this.categoryFormError = null, 1500);
                 });
@@ -203,7 +202,9 @@
                 this.purchase.category_id = categoryID;
                 this.purchase.icon = categoryIcon;
             },
-
+            onIconClick ( icon ) {
+                this.category.icon = icon;
+            },
         }
     }
 </script>

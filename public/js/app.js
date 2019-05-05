@@ -1889,6 +1889,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _api_purchases__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../api/purchases */ "./resources/js/api/purchases.js");
+/* harmony import */ var _api_categories__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../api/categories */ "./resources/js/api/categories.js");
 //
 //
 //
@@ -1987,6 +1988,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -1999,7 +2001,7 @@ __webpack_require__.r(__webpack_exports__);
       saving: false,
       // create: false,
       purchases: null,
-      icons: ['coffee', 'home', 'egg', 'sad-cry', 'skiing', 'tshirt', 'wallet', 'tv', 'lightbulb', 'heartbeat'],
+      icons: ['coffee', 'home', 'egg', 'sad-cry', 'skiing', 'tshirt', 'wallet', 'tv', 'lightbulb', 'heartbeat', 'gift'],
       purchase: {
         id: null,
         title: "",
@@ -2079,22 +2081,20 @@ __webpack_require__.r(__webpack_exports__);
     onCategorySubmit: function onCategorySubmit(event) {
       var _this4 = this;
 
-      _api_purchases__WEBPACK_IMPORTED_MODULE_1__["default"].post({
-        title: this.purchase.title,
-        cost: this.purchase.cost,
-        amount: this.purchase.amount,
-        category_id: this.purchase.category_id
+      _api_categories__WEBPACK_IMPORTED_MODULE_2__["default"].post({
+        title: this.category.title,
+        icon: this.category.icon
       }).then(function (response) {
+        $('#add-category-form').modal('hide');
         _this4.message = 'Category Added';
         setTimeout(function () {
           return _this4.message = null;
         }, 1500);
 
-        _this4.purchases.unshift(response.data.data);
+        _this4.categories.unshift(response.data.data);
 
-        _this4.purchase.title = '';
-        _this4.purchase.cost = '';
-        _this4.purchase.amount = 1;
+        _this4.category.title = '';
+        _this4.category.icon = null;
       })["catch"](function (error) {
         _this4.categoryFormError = 'Something went wrong, please try again later';
         setTimeout(function () {
@@ -2109,6 +2109,9 @@ __webpack_require__.r(__webpack_exports__);
 
       this.purchase.category_id = categoryID;
       this.purchase.icon = categoryIcon;
+    },
+    onIconClick: function onIconClick(icon) {
+      this.category.icon = icon;
     }
   }
 });
@@ -38092,8 +38095,6 @@ var render = function() {
         )
       : _vm._e(),
     _vm._v(" "),
-    !_vm.loaded ? _c("div", [_vm._v("Loading...")]) : _vm._e(),
-    _vm._v(" "),
     _c(
       "form",
       {
@@ -38199,7 +38200,7 @@ var render = function() {
               staticClass: "btn btn-outline-primary",
               attrs: { type: "submit", disabled: _vm.saving }
             },
-            [_vm._v("\n                Update\n            ")]
+            [_vm._v("\n                    Update\n                ")]
           ),
           _vm._v(" "),
           _c(
@@ -38407,7 +38408,7 @@ var render = function() {
     _vm._v(" "),
     _c(
       "div",
-      { staticClass: "btn-group categories-list", attrs: { role: "group" } },
+      { staticClass: "flex-wrap categories-list", attrs: { role: "group" } },
       _vm._l(_vm.categories, function(category) {
         return _c(
           "button",
@@ -38584,7 +38585,7 @@ var render = function() {
                       })
                     ]),
                     _vm._v(" "),
-                    _c("div", { staticClass: "form-group col-md-3" }, [
+                    _c("div", { staticClass: "form-group col-md-6" }, [
                       _c("label", { attrs: { for: "category-icon" } }, [
                         _vm._v("Choose icon")
                       ]),
@@ -38614,7 +38615,7 @@ var render = function() {
                       _c(
                         "div",
                         {
-                          staticClass: "btn-group icons-list",
+                          staticClass: "flex-wrap icons-list",
                           attrs: { role: "group" }
                         },
                         _vm._l(_vm.icons, function(icon) {
@@ -38639,12 +38640,12 @@ var render = function() {
                         }),
                         0
                       )
-                    ])
+                    ]),
+                    _vm._v(" "),
+                    _vm._m(2)
                   ]
                 )
-              ]),
-              _vm._v(" "),
-              _vm._m(2)
+              ])
             ])
           ]
         )
@@ -38697,7 +38698,7 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "modal-footer" }, [
+    return _c("div", { staticClass: "form-group col-md-6" }, [
       _c(
         "button",
         { staticClass: "btn btn-outline-primary", attrs: { type: "submit" } },
@@ -53496,6 +53497,38 @@ module.exports = function(module) {
 	return module;
 };
 
+
+/***/ }),
+
+/***/ "./resources/js/api/categories.js":
+/*!****************************************!*\
+  !*** ./resources/js/api/categories.js ***!
+  \****************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  all: function all() {
+    return axios.get('/api/categories');
+  },
+  find: function find(id) {
+    return axios.get("/api/categories/".concat(id));
+  },
+  post: function post(data) {
+    return axios.post("/api/categories/", data);
+  },
+  update: function update(id, data) {
+    return axios.put("/api/categories/".concat(id), data);
+  },
+  "delete": function _delete(id) {
+    return axios["delete"]("/api/categories/".concat(id));
+  }
+});
 
 /***/ }),
 
