@@ -37,7 +37,7 @@ class PurchaseController extends Controller
                 'title'       => 'required|min:3|max:255',
                 'amount'      => 'required|numeric',
                 'cost'        => 'required|numeric',
-                'category_id' => 'required|numeric',
+                'category_id' => 'requered|numeric',
             ]);
             $data['user_id'] = $id;
 

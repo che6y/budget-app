@@ -15,9 +15,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $category = Category::orderBy('created_at', 'desc')
-            ->take(10)
-            ->get();
+        $category = Category::all();
 
         return new CategoryCollection($category);
     }

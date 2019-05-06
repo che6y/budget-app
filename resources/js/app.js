@@ -15,6 +15,8 @@ Vue.use(VueRouter);
 window.App = require('./components/App').default;
 window.Purchases = require('./components/PurchasesIndex').default;
 window.PurchasesEdit = require('./components/PurchasesEdit').default;
+window.CategoriesIndex = require('./components/CategoriesIndex').default;
+
 
 const router = new VueRouter({
     mode: 'history',
@@ -28,6 +30,11 @@ const router = new VueRouter({
             path: '/purchases/:purchase/edit',
             name: 'purchases.edit',
             component: PurchasesEdit,
+        },
+        {
+            path: '/categories',
+            name: 'categories.index',
+            component: CategoriesIndex
         },
     ],
 });
