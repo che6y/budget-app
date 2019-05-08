@@ -35,7 +35,7 @@
                 <i class="fas fa-plus"></i>
             </button>
             <div class="dropdown-menu" aria-labelledby="category-actions">
-                <router-link class="dropdown-item" :to="{ name: 'purchases.edit', params: { purchase: purchase.id } }">Edit</router-link>
+                <router-link class="dropdown-item" :to="{ name: 'categories.index' }">Edit</router-link>
                 <button class="dropdown-item" data-toggle="modal" data-target="#add-category-form" type="button">
                     Add New
                 </button>

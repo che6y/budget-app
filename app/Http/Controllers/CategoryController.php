@@ -74,10 +74,18 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy( Category $category )
+    public function destroy( $id )
     {
-        $category->delete();
+        if ( $id > 0 ) {
+            $purchases = Category::find($id)->purchases();
 
-        return response(null, 204);
+            if ( !empty($purchases) && count($purchases) > 0 ){
+                $response = "Can't delete category which has asingned purchases";
+            } else {
+                $id->delete();
+                $response = 'Category successfully deleted';
+            }
+            return response( $response, 204 );
+        }
     }
 }
