@@ -6,7 +6,7 @@
             {{ error }}
         </div>
 
-        <purchases-form v-bind:purchase="purchase"></purchases-form>
+<!--        <purchases-form v-bind:purchase="purchase"></purchases-form>-->
 
         <div class="flex-wrap categories-list" role="group">
             <button v-for="category in categories" v-on:click="onCategoryClick( $event, category.id, category.title,
@@ -25,67 +25,52 @@
             </div>
         </div>
 
-        <ul v-if="purchases" class="list-group">
-            <li class="list-group-item list-group-item-info">Today</li>
-            <li v-for="purchase in purchases" class="list-group-item list-group-item-action" v-if="purchase.isToday">
-                <div class="row justify-content-end">
-                    <div class="col-sm-3 col-4">
-                        {{ purchase.cost * purchase.amount }} baht
-                    </div>
-                    <div class="col-sm-5 col-4">
-                        <i v-if="purchase.icon" class="fas" v-bind:class="[purchase.icon ? 'fa-' + purchase.icon : '']"></i>
-                        {{ purchase.title }}
-                    </div>
-                    <div class="col-sm-3 col-4">
-                        {{ purchase.created_at }}
-                    </div>
-                    <div class="col-sm-1 col-4 ">
-                        <div class="dropdown">
-                            <button class="btn btn-outline-info dropdown-toggle btn-sm" type="button"
-                                    id="purchase-actions"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-ellipsis-h"></i>
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="purchase-actions">
-                                <router-link class="dropdown-item" :to="{ name: 'purchases.edit', params: { purchase: purchase.id } }">Edit</router-link>
-                                <button class="dropdown-item" :disabled="saving" @click.prevent="onDelete( $event,
-                                purchase.id )">Delete</button>
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <a class="nav-item nav-link active" id="nav-week-tab" data-toggle="tab" href="#nav-week" role="tab"
+                   aria-controls="nav-week" aria-selected="true">Week</a>
+                <a class="nav-item nav-link" id="nav-month-tab" data-toggle="tab" href="#nav-month" role="tab"
+                   aria-controls="nav-month" aria-selected="false">Month</a>
+                <a class="nav-item nav-link" id="nav-year-tab" data-toggle="tab" href="#nav-year" role="tab"
+                   aria-controls="nav-year" aria-selected="false">Year</a>
+            </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-week" role="tabpanel" aria-labelledby="nav-week-tab">
+                <ul v-if="purchases" class="list-group">
+                    <li v-for="purchase in purchases" class="list-group-item list-group-item-action">
+                        <div class="row justify-content-end">
+                            <div class="col-sm-5 col-4">
+                                <i v-if="purchase.icon" class="fas" v-bind:class="[purchase.icon ? 'fa-' + purchase.icon : '']"></i>
+                                {{ purchase.title }}
+                            </div>
+                            <div class="col-sm-3 col-4">
+                                {{ purchase.cost * purchase.amount }} baht
+                            </div>
+                            <div class="col-sm-3 col-4">
+                                {{ purchase.created_at }}
+                            </div>
+                            <div class="col-sm-1 col-4 ">
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-info dropdown-toggle btn-sm" type="button"
+                                            id="purchase-actions"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="purchase-actions">
+                                        <router-link class="dropdown-item" :to="{ name: 'purchases.edit', params: { purchase: purchase.id } }">Edit</router-link>
+                                        <button class="dropdown-item" :disabled="saving" @click.prevent="onDelete( $event,
+                                            purchase.id )">Delete</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </li>
-            <li class="list-group-item list-group-item-info"></li>
-            <li v-for="purchase in purchases" class="list-group-item list-group-item-action" v-if="purchase.isToday
-            === false">
-                <div class="row justify-content-end">
-                    <div class="col-sm-3 col-4">
-                        {{ purchase.cost * purchase.amount }} baht
-                    </div>
-                    <div class="col-sm-5 col-4">
-                        <i v-if="purchase.icon" class="fas" v-bind:class="[purchase.icon ? 'fa-' + purchase.icon : '']"></i>
-                        {{ purchase.title }}
-                    </div>
-                    <div class="col-sm-3 col-4">
-                        {{ purchase.created_at }}
-                    </div>
-                    <div class="col-sm-1 col-4 ">
-                        <div class="dropdown">
-                            <button class="btn btn-outline-info dropdown-toggle btn-sm" type="button"
-                                    id="purchase-actions"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-ellipsis-h"></i>
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="purchase-actions">
-                                <router-link class="dropdown-item" :to="{ name: 'purchases.edit', params: { purchase: purchase.id } }">Edit</router-link>
-                                <button class="dropdown-item" :disabled="saving" @click.prevent="onDelete( $event,
-                                purchase.id )">Delete</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </li>
-        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div class="tab-pane fade" id="nav-month" role="tabpanel" aria-labelledby="nav-month-tab">...</div>
+            <div class="tab-pane fade" id="nav-year" role="tabpanel" aria-labelledby="nav-year-tab">...</div>
+        </div>
 
         <!-- Modal -->
         <div class="modal fade" id="add-category-form" tabindex="-1" role="dialog" aria-labelledby="modal-title" aria-hidden="true">
@@ -179,10 +164,10 @@
                         this.purchases = response.data.data;
                         this.loading = false;
 
-                        for ( var i in this.purchases ){
-                            let date = moment( this.purchases[i]['created_at'] ).format('YYYY-MM-DD');
-                            this.purchases[i]['isToday'] = moment( date ).isSame( now, 'day' );
-                        }
+                        // for ( var i in this.purchases ){
+                        //     let date = moment( this.purchases[i]['created_at'] ).format('YYYY-MM-DD');
+                        //     this.purchases[i]['isToday'] = moment( date ).isSame( now, 'day' );
+                        // }
 
                     }).catch(error => {
                         this.loading = false;

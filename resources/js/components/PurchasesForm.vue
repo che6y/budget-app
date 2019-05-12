@@ -21,11 +21,7 @@
 
 <script>
     export default {
-        // data() {
-        //     return {
-        //         purchase: null
-        //     };
-        // }
+        name: "PurchasesForm"
     }
 </script>
 

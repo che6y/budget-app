@@ -18,7 +18,7 @@ window.PurchasesEdit = require('./components/PurchasesEdit').default;
 window.CategoriesIndex = require('./components/CategoriesIndex').default;
 
 window.PurchasesForm = require('./components/PurchasesForm').default;
-Vue.component('purchases-form',PurchasesForm);
+Vue.component( 'purchases-form', PurchasesForm );
 
 const router = new VueRouter({
     mode: 'history',
