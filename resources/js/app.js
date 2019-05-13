@@ -12,10 +12,10 @@ window.VueRouter = require('vue-router').default;
 
 Vue.use(VueRouter);
 
-window.App = require('./components/App').default;
-window.Purchases = require('./components/PurchasesIndex').default;
-window.PurchasesEdit = require('./components/PurchasesEdit').default;
-window.CategoriesIndex = require('./components/CategoriesIndex').default;
+const App = require('./components/App').default;
+const Purchases = require('./components/PurchasesIndex').default;
+const PurchasesEdit = require('./components/PurchasesEdit').default;
+const CategoriesIndex = require('./components/CategoriesIndex').default;
 
 window.PurchasesForm = require('./components/PurchasesForm').default;
 Vue.component( 'purchases-form', PurchasesForm );
