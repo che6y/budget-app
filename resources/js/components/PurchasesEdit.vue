@@ -18,7 +18,7 @@
                 <button class="btn btn-outline-primary" type="submit" :disabled="saving">
                     Update
                 </button>
-                <button class="btn btn-outline-secondary" type="button" @click="$router.go(-1)">Cancel</button>
+                <button class="btn btn-outline-secondary" type="button" >Cancel</button>
                 <button class="btn btn-outline-danger" :disabled="saving" @click.prevent="onDelete($event)">Delete</button>
             </div>
         </form>
@@ -28,17 +28,13 @@
     import api from '../api/purchases';
 
     export default {
+        props: [ 'item' ],
         data() {
             return {
                 message: null,
                 saving:false,
                 loaded: false,
-                purchase: {
-                    id: null,
-                    title: "",
-                    cost: "",
-                    amount: null
-                }
+                purchase: this.item
             };
         },
         methods: {
@@ -49,6 +45,7 @@
                     title: this.purchase.title,
                     cost: this.purchase.cost,
                     amount: this.purchase.amount,
+                    category_id: this.purchase.category_id,
                 }).then((response) => {
                     this.message = 'Purchase updated';
                     setTimeout(() => this.message = null, 2000);
@@ -68,7 +65,7 @@
             },
         },
         created() {
-            api.find(this.$route.params.purchase).then((response) => {
+            api.find(this.purchase.id).then((response) => {
                 this.loaded = true;
                 this.purchase = response.data.data;
             });

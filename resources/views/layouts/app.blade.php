@@ -7,6 +7,10 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    @if (Auth::check())
+        <meta name="user-id" content="{{ Auth::user()->id }}">
+    @endif
+
     <title>{{ config('app.name', 'Purchases') }}</title>
 
     <!-- Scripts -->
@@ -27,14 +31,19 @@
                 <a class="navbar-brand" href="{{ url('/') }}">
                     {{ config('app.name', 'Purchases') }}
                 </a>
+
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
-
+                        <li class="nav-item">
+                            <a class="nav-link" href="/">Purchases</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/categories">Categories</a>
+                        </li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->

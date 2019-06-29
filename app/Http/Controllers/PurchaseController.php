@@ -8,6 +8,7 @@ use App\Purchase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
 
 class PurchaseController extends Controller
 {
@@ -18,7 +19,7 @@ class PurchaseController extends Controller
     public function index()
     {
         $purchases = Purchase::orderBy('created_at', 'desc')
-            ->take(10)
+            ->take(20)
             ->get();
 
         return new PurchaseCollection($purchases);
@@ -32,19 +33,16 @@ class PurchaseController extends Controller
      */
     public function store( Request $request )
     {
-            $id = Auth::id();
-            $data = $request->validate([
-                'title'       => 'required|min:3|max:255',
-                'amount'      => 'required|numeric',
-                'cost'        => 'required|numeric',
-                'category_id' => 'requered|numeric',
-            ]);
-            $data['user_id'] = $id;
+        $data = $request->validate([
+            'user_id'     => 'required|numeric',
+            'title'       => 'required|min:3|max:255',
+            'amount'      => 'required|numeric',
+            'cost'        => 'required|numeric',
+            'category_id' => 'required|numeric',
+        ]);
 
-            $purchase = Purchase::create(
-                $data
-            );
-            return new PurchaseResource($purchase);
+        $purchase = Purchase::create( $data );
+        return new PurchaseResource($purchase);
     }
 
     /**

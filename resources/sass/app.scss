@@ -13,3 +13,17 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
+.btn-outline-info:hover {
+  color: #ffffff;
+}
+
+.btn-sm, .btn-group-sm > .btn {
+  margin: 1px;
+}
+
+.btn-outline-info:not(:disabled):not(.disabled):active,
+.btn-outline-info:not(:disabled):not(.disabled).active,
+.show > .btn-outline-info.dropdown-toggle {
+  color: #ffffff;
+  box-shadow: 0 0 0 0.2rem rgba(108, 178, 235, 0.5);
+}

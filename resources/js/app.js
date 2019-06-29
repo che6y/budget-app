@@ -12,26 +12,24 @@ window.VueRouter = require('vue-router').default;
 
 Vue.use(VueRouter);
 
-const App = require('./components/App').default;
-const Purchases = require('./components/PurchasesIndex').default;
-const PurchasesEdit = require('./components/PurchasesEdit').default;
+const App             = require('./components/App').default;
+const Purchases       = require('./components/PurchasesIndex').default;
+const PurchasesEdit   = require('./components/PurchasesEdit').default;
+const PurchasesForm   = require('./components/PurchasesForm').default;
 const CategoriesIndex = require('./components/CategoriesIndex').default;
+const CategoriesList  = require('./components/CategoriesList').default;
 
-window.PurchasesForm = require('./components/PurchasesForm').default;
 Vue.component( 'purchases-form', PurchasesForm );
+Vue.component( 'purchase-edit', PurchasesEdit );
+Vue.component( 'categories-index', CategoriesList );
 
 const router = new VueRouter({
     mode: 'history',
     routes: [
         {
-            path: '/purchases',
+            path: '/',
             name: 'purchases.index',
             component: Purchases
-        },
-        {
-            path: '/purchases/:purchase/edit',
-            name: 'purchases.edit',
-            component: PurchasesEdit,
         },
         {
             path: '/categories',

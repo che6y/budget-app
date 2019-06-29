@@ -123,6 +123,8 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
+    'log_level' => env('APP_LOG_LEVEL', 'debug'),
+
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers

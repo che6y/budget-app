@@ -6,6 +6,7 @@ use App\Http\Resources\Category as CategoryResource;
 use App\Http\Resources\CategoryCollection;
 use App\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class CategoryController extends Controller
 {
@@ -15,7 +16,9 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $category = Category::all();
+        $category = Category::orderBy('created_at', 'desc')
+            ->take(30)
+            ->get();
 
         return new CategoryCollection($category);
     }
@@ -74,18 +77,20 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy( $id )
+    public function destroy( Category $category )
     {
-        if ( $id > 0 ) {
-            $purchases = Category::find($id)->purchases();
+        $purchases = $category->purchases()->get();
+        $count = $purchases->count();
+        $response = array();
 
-            if ( !empty($purchases) && count($purchases) > 0 ){
-                $response = "Can't delete category which has asingned purchases";
-            } else {
-                $id->delete();
-                $response = 'Category successfully deleted';
-            }
-            return response( $response, 204 );
+        if ( $count > 0 ){
+            $response['text'] = "Can't delete category which has assigned purchases";
+            $response['deleted'] = false;
+        } else {
+            $category->delete();
+            $response['text'] = "Category successfully deleted";
+            $response['deleted'] = true;
         }
+        return response( $response, 200 );
     }
 }
