@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Purchase;
+use Illuminate\Support\Facades\DB;
 
 class AppController extends Controller
 {
     public function index()
     {
-        return view('/home');
+        $total = Purchase::sum(DB::raw('cost * amount'));
+        return view('/home', [ 'total' => $total ]);
     }
 }

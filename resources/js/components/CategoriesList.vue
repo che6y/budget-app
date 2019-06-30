@@ -53,7 +53,6 @@
 </template>
 
 <script>
-    import axios from 'axios';
     import categories_api from '../api/categories';
     import icons from '../icons';
 
@@ -80,13 +79,13 @@
                 }).then( (response) => {
                     $('#add-category-form').modal('hide');
                     this.message = 'Category Added';
-                    setTimeout(() => this.message = null, 1500);
+                    setTimeout(() => this.message = null, 3000);
                     this.categories.unshift(response.data.data);
                     this.category.title = '';
                     this.category.icon = null;
                 }).catch( error => {
                     this.error = 'Something went wrong, please try again later';
-                    setTimeout(() => this.error = null, 1500);
+                    setTimeout(() => this.error = null, 3000);
                 });
             },
             onIconClick ( event, icon ) {
@@ -106,15 +105,11 @@
     .categories-list {
         margin: 0 0 20px 0;
     }
-    .dropdown-toggle::after {
-        display: none;
-    }
-
     .btn-outline-info:focus,
     .btn-outline-info.focus {
         box-shadow: none;
     }
-    .dropdown-toggle.btn-sm {
-        border: none;
+    .btn.btn-outline-info.btn-sm {
+        border: 1px solid #6cb2eb;
     }
 </style>

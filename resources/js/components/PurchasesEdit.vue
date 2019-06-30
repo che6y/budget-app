@@ -48,7 +48,7 @@
                     category_id: this.purchase.category_id,
                 }).then((response) => {
                     this.message = 'Purchase updated';
-                    setTimeout(() => this.message = null, 2000);
+                    setTimeout(() => this.message = null, 3000);
                     this.purchase = response.data.data;
                 }).catch(error => {
                     console.log(error)
@@ -60,7 +60,7 @@
                 api.delete(this.purchase.id)
                     .then((response) => {
                         this.message = 'Item Deleted';
-                        setTimeout(() => this.$router.push({ name: 'purchases.index' }), 2000);
+                        setTimeout(() => this.message = null, 3000);
                     });
             },
         },

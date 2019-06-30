@@ -10676,3 +10676,13 @@ a.text-dark:focus {
   box-shadow: 0 0 0 0.2rem rgba(108, 178, 235, 0.5);
 }
 
+.btn-sm,
+.btn-group-sm > .btn {
+  border: none;
+}
+
+.btn-outline-info:focus,
+.btn-outline-info.focus {
+  box-shadow: none;
+}
+

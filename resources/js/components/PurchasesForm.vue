@@ -74,11 +74,11 @@
                     this.purchase.amount = 1;
 
                     this.message = 'Purchase Added';
-                    setTimeout(() => this.message = null, 1500);
+                    setTimeout(() => this.message = null, 3000);
 
                 }).catch( error => {
                     this.error = 'Something went wrong, please try again later';
-                    setTimeout(() => this.error = null, 1500);
+                    setTimeout(() => this.error = null, 3000);
                 }).then(_ => this.saving = false);
             },
             onCategoryClick( event, categoryID, categoryIcon ) {

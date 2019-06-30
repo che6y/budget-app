@@ -2,66 +2,48 @@
     <div>
         <div v-if="message" class="alert alert-success" role="alert">{{ message }}</div>
         <ul v-if="categories" class="list-group">
-            <li v-for="category in categories" class="list-group-item list-group-item-action">
-                <div class="row justify-content-end">
-                    <div class="col-10">
-                        <i v-if="category.icon" class="fas" v-bind:class="[category.icon ? 'fa-' + category.icon : '']"></i>  {{
-                        category.title }}
+            <li v-for="(category, index) in categories" :id="['category-' + index]" class="list-group-item list-group-item-action">
+                <div class="d-flex">
+                    <div class="flex-grow-1">
+                        <i v-if="category.icon" class="fa" :class="[category.icon ? 'fa-' + category.icon : '']"></i>
+                        {{ category.title }}
                     </div>
-                    <div class="col-2 justify-content-between align-items-center">
-                        <div class="dropdown">
-                            <button class="btn btn-outline-info dropdown-toggle btn-sm" type="button"
-                                    id="caegory-actions"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-ellipsis-h"></i>
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="caegory-actions">
-                                <button class="dropdown-item" data-toggle="modal" type="button"
-                                        @click.prevent="onEditClicked($event)">Edit</button>
-                                <button class="dropdown-item" @click.prevent="onDelete( $event, category.id )">Delete</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </li>
-        </ul>
-
-        <!-- Modal -->
-        <div class="modal fade" id="add-category-form" tabindex="-1" role="dialog" aria-labelledby="modal-title" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modal-title">Edit category</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+                    <div class="align-items-center">
+                        <button class="btn btn-outline-info btn-sm" type="button" @click.prevent="onBtnClick($event, index)">
+                            <i class="fas fa-ellipsis-h"></i>
                         </button>
                     </div>
-                    <div class="modal-body">
-                        <form class="form-row justify-content-start" @submit.prevent="onCategorySubmit($event)">
-                            <div class="form-group col-md-6">
-                                <label for="category-title">Category Name</label>
-                                <input class="form-control" id="category-title" v-model="category.title" />
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="category-icon">Choose icon</label>
-                                <input class="form-control" id="category-icon" type="hidden" v-model="category.icon" />
-
-                                <div class="flex-wrap icons-list" role="group">
-                                    <button v-for="icon in icons" v-on:click="onIconClick( $event, icon )" type="button"
-                                            class="btn btn-outline-info" >
-                                        <i class="fas" v-bind:class="[ 'fa-' + icon]"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <button type="submit" class="btn btn-outline-primary" >Add</button>
-                                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
-                            </div>
-                        </form>
-                    </div>
                 </div>
-            </div>
-        </div>
+
+                <div class="category-edit">
+                    <form class="form-row justify-content-start" @submit.prevent="onCategorySubmit($event, category.id,
+                    category.title)">
+                        <div class="form-group col-md-6">
+                            <label for="category-title">Category Name</label>
+                            <input class="form-control" id="category-title" v-model="category.title" />
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Choose icon</label>
+                            <div class="flex-wrap icons-list" role="group">
+                                <input class="form-control category-icon" type="hidden" name="category-icon" :value="category.icon" />
+
+                                <button v-for="icon in icons" @click.prevent="onIconClick( $event, icon )" type="button"
+                                        class="btn btn-outline-info" :class="[category.icon === icon ? 'active' : '']" >
+                                    <i class="fas" v-bind:class="[ 'fa-' + icon]"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <button type="submit" class="btn btn-outline-primary">Update</button>
+                            <button type="button" class="btn btn-outline-danger" @click.prevent="onDelete($event, category.id)">
+                                Delete
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </li>
+        </ul>
     </div>
 
 </template>
@@ -78,11 +60,6 @@
                 error: null,
                 categories: null,
                 icons: icons,
-                category: {
-                    id: null,
-                    title: "",
-                    icon: null
-                },
             }
         },
         created() {
@@ -100,44 +77,50 @@
                     this.error = error.response.data.message || error.message;
                 });
             },
-            onCategorySubmit( event ) {
+            onCategorySubmit( event, id, title ) {
+                let category_icon = $('#category-icon').val();
+                console.log(category_icon);
                 categories_api.post( {
-                    title: this.category.title,
-                    icon: this.category.icon,
+                    id   : id,
+                    title: title,
+                    icon : category_icon,
                 }).then( (response) => {
-                    $('#add-category-form').modal('hide')
-                    this.message = 'Category Added';
-                    setTimeout(() => this.message = null, 1500);
-                    this.categories.unshift(response.data.data);
-                    this.category.title = '';
-                    this.category.icon = null;
+                    this.message = 'Category Updated';
+                    setTimeout(() => this.message = null, 3000);
                 }).catch( error => {
                     this.error = 'Something went wrong, please try again later';
-                    setTimeout(() => this.categoryFormError = null, 1500);
+                    setTimeout(() => this.error = null, 3000);
                 });
             },
             onDelete( event, id ) {
                 categories_api.delete( id )
                     .then(( response ) => {
-                        console.log(response.data.deleted);
                         if ( response.data.deleted ) {
                             $(event.target).closest('.list-group-item').hide();
                         }
                         this.message = response.data.text;
-                        setTimeout(() => this.message = null, 2000);
-
+                        setTimeout(() => this.message = null, 3000);
                     });
             },
-            onEditClicked( ){
-                $('#add-category-form').modal('show');
+            onBtnClick( event, index ) {
+                const parent = $(event.target).closest('#category-'+index);
+
+                if ( parent.find('.category-edit').css('display') === 'none' ){
+                    parent.find('.category-edit').show();
+                    parent.siblings().find('.category-edit').hide();
+                } else {
+                    parent.find('.category-edit').hide();
+                }
             },
             onIconClick ( event, icon ) {
-                this.category.icon = icon;
                 $( event.target )
                     .closest('button')
                     .addClass('active')
                     .siblings()
                     .removeClass('active');
+                $( event.target ).closest('.category-icon').val(icon);
+                console.log($( event.target ).closest('.category-icon'));
+                console.log($( event.target ).closest('.category-icon').val());
             },
         },
 
@@ -145,15 +128,10 @@
 </script>
 
 <style scoped>
-    .dropdown-toggle::after {
+    .category-edit {
         display: none;
     }
-
-    .btn-outline-info:focus,
-    .btn-outline-info.focus {
-        box-shadow: none;
-    }
-    .dropdown-toggle.btn-sm {
-        border: none;
+    .fa {
+        padding-right: 10px;
     }
 </style>

@@ -1772,7 +1772,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: "App"
+  name: "App",
+  props: ['total']
 });
 
 /***/ }),
@@ -1840,24 +1841,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 
 
@@ -1867,12 +1850,7 @@ __webpack_require__.r(__webpack_exports__);
       message: null,
       error: null,
       categories: null,
-      icons: _icons__WEBPACK_IMPORTED_MODULE_2__["default"],
-      category: {
-        id: null,
-        title: "",
-        icon: null
-      }
+      icons: _icons__WEBPACK_IMPORTED_MODULE_2__["default"]
     };
   },
   created: function created() {
@@ -1890,36 +1868,31 @@ __webpack_require__.r(__webpack_exports__);
         _this.error = error.response.data.message || error.message;
       });
     },
-    onCategorySubmit: function onCategorySubmit(event) {
+    onCategorySubmit: function onCategorySubmit(event, id, title) {
       var _this2 = this;
 
+      var category_icon = $('#category-icon').val();
+      console.log(category_icon);
       _api_categories__WEBPACK_IMPORTED_MODULE_1__["default"].post({
-        title: this.category.title,
-        icon: this.category.icon
+        id: id,
+        title: title,
+        icon: category_icon
       }).then(function (response) {
-        $('#add-category-form').modal('hide');
-        _this2.message = 'Category Added';
+        _this2.message = 'Category Updated';
         setTimeout(function () {
           return _this2.message = null;
-        }, 1500);
-
-        _this2.categories.unshift(response.data.data);
-
-        _this2.category.title = '';
-        _this2.category.icon = null;
+        }, 3000);
       })["catch"](function (error) {
         _this2.error = 'Something went wrong, please try again later';
         setTimeout(function () {
-          return _this2.categoryFormError = null;
-        }, 1500);
+          return _this2.error = null;
+        }, 3000);
       });
     },
     onDelete: function onDelete(event, id) {
       var _this3 = this;
 
       _api_categories__WEBPACK_IMPORTED_MODULE_1__["default"]["delete"](id).then(function (response) {
-        console.log(response.data.deleted);
-
         if (response.data.deleted) {
           $(event.target).closest('.list-group-item').hide();
         }
@@ -1927,15 +1900,24 @@ __webpack_require__.r(__webpack_exports__);
         _this3.message = response.data.text;
         setTimeout(function () {
           return _this3.message = null;
-        }, 2000);
+        }, 3000);
       });
     },
-    onEditClicked: function onEditClicked() {
-      $('#add-category-form').modal('show');
+    onBtnClick: function onBtnClick(event, index) {
+      var parent = $(event.target).closest('#category-' + index);
+
+      if (parent.find('.category-edit').css('display') === 'none') {
+        parent.find('.category-edit').show();
+        parent.siblings().find('.category-edit').hide();
+      } else {
+        parent.find('.category-edit').hide();
+      }
     },
     onIconClick: function onIconClick(event, icon) {
-      this.category.icon = icon;
       $(event.target).closest('button').addClass('active').siblings().removeClass('active');
+      $(event.target).closest('.category-icon').val(icon);
+      console.log($(event.target).closest('.category-icon'));
+      console.log($(event.target).closest('.category-icon').val());
     }
   }
 });
@@ -1951,10 +1933,8 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _api_categories__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../api/categories */ "./resources/js/api/categories.js");
-/* harmony import */ var _icons__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../icons */ "./resources/js/icons.js");
+/* harmony import */ var _api_categories__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../api/categories */ "./resources/js/api/categories.js");
+/* harmony import */ var _icons__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../icons */ "./resources/js/icons.js");
 //
 //
 //
@@ -2009,7 +1989,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2018,7 +1997,7 @@ __webpack_require__.r(__webpack_exports__);
     return {
       message: null,
       error: null,
-      icons: _icons__WEBPACK_IMPORTED_MODULE_2__["default"],
+      icons: _icons__WEBPACK_IMPORTED_MODULE_1__["default"],
       category: {
         id: null,
         title: "",
@@ -2030,7 +2009,7 @@ __webpack_require__.r(__webpack_exports__);
     onCategorySubmit: function onCategorySubmit(event) {
       var _this = this;
 
-      _api_categories__WEBPACK_IMPORTED_MODULE_1__["default"].post({
+      _api_categories__WEBPACK_IMPORTED_MODULE_0__["default"].post({
         title: this.category.title,
         icon: this.category.icon
       }).then(function (response) {
@@ -2038,7 +2017,7 @@ __webpack_require__.r(__webpack_exports__);
         _this.message = 'Category Added';
         setTimeout(function () {
           return _this.message = null;
-        }, 1500);
+        }, 3000);
 
         _this.categories.unshift(response.data.data);
 
@@ -2048,7 +2027,7 @@ __webpack_require__.r(__webpack_exports__);
         _this.error = 'Something went wrong, please try again later';
         setTimeout(function () {
           return _this.error = null;
-        }, 1500);
+        }, 3000);
       });
     },
     onIconClick: function onIconClick(event, icon) {
@@ -2121,7 +2100,7 @@ __webpack_require__.r(__webpack_exports__);
         _this.message = 'Purchase updated';
         setTimeout(function () {
           return _this.message = null;
-        }, 2000);
+        }, 3000);
         _this.purchase = response.data.data;
       })["catch"](function (error) {
         console.log(error);
@@ -2136,10 +2115,8 @@ __webpack_require__.r(__webpack_exports__);
       _api_purchases__WEBPACK_IMPORTED_MODULE_0__["default"]["delete"](this.purchase.id).then(function (response) {
         _this2.message = 'Item Deleted';
         setTimeout(function () {
-          return _this2.$router.push({
-            name: 'purchases.index'
-          });
-        }, 2000);
+          return _this2.message = null;
+        }, 3000);
       });
     }
   },
@@ -2246,12 +2223,12 @@ __webpack_require__.r(__webpack_exports__);
         _this.message = 'Purchase Added';
         setTimeout(function () {
           return _this.message = null;
-        }, 1500);
+        }, 3000);
       })["catch"](function (error) {
         _this.error = 'Something went wrong, please try again later';
         setTimeout(function () {
           return _this.error = null;
-        }, 1500);
+        }, 3000);
       }).then(function (_) {
         return _this.saving = false;
       });
@@ -2367,17 +2344,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['total'],
   data: function data() {
     return {
       message: null,
@@ -2385,12 +2355,15 @@ __webpack_require__.r(__webpack_exports__);
       loading: false,
       saving: false,
       purchases: null,
-      categories: null
+      categories: null,
+      summary: this.total,
+      summaryP: null
     };
   },
   created: function created() {
     this.fetchPurchaseData();
     this.fetchCategoryData();
+    this.summaryP = this.summary / 118000 * 100;
   },
   methods: {
     fetchCategoryData: function fetchCategoryData() {
@@ -2432,41 +2405,37 @@ __webpack_require__.r(__webpack_exports__);
         _this3.message = 'Purchase updated';
         setTimeout(function () {
           return _this3.message = null;
-        }, 2000);
+        }, 3000);
+        $('.purchase-edit').hide();
       })["catch"](function (error) {
         console.log(error);
       }).then(function (_) {
         return _this3.saving = false;
       });
     },
-    onEdit: function onEdit(event, index) {
-      var parent = $(event.target).closest('#purchase-' + index);
-      parent.find('.purchase-edit').show();
-      parent.siblings().find('.purchase-edit').hide();
-    },
     onDelete: function onDelete(event, id) {
       var _this4 = this;
 
-      if (confirm("Do you really want to remove this item?")) {
-        this.saving = true;
-        $(event.target).closest('.list-group-item').hide();
-        _api_purchases__WEBPACK_IMPORTED_MODULE_1__["default"]["delete"](id).then(function (response) {
-          _this4.message = 'Item Deleted';
-          setTimeout(function () {
-            return _this4.message = null;
-          }, 1500);
-          _this4.saving = false;
-        });
-      } else {
-        return true;
-      }
+      this.saving = true;
+      $(event.target).closest('.list-group-item').hide();
+      _api_purchases__WEBPACK_IMPORTED_MODULE_1__["default"]["delete"](id).then(function (response) {
+        _this4.message = 'Item Deleted';
+        _this4.saving = false;
+        setTimeout(function () {
+          return _this4.message = null;
+        }, 3000);
+        $('.purchase-edit').hide();
+      });
     },
-    onClose: function onClose(event, index) {
+    onBtnClick: function onBtnClick(event, index) {
       var parent = $(event.target).closest('#purchase-' + index);
-      parent.find('.purchase-edit').hide();
-    },
-    changeIcon: function changeIcon(event) {
-      var value = $(event.target).val();
+
+      if (parent.find('.purchase-edit').css('display') === 'none') {
+        parent.find('.purchase-edit').show();
+        parent.siblings().find('.purchase-edit').hide();
+      } else {
+        parent.find('.purchase-edit').hide();
+      }
     }
   }
 });
@@ -6930,7 +6899,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.dropdown-toggle[data-v-7654757b]::after {\n    display: none;\n}\n.btn-outline-info[data-v-7654757b]:focus,\n.btn-outline-info.focus[data-v-7654757b] {\n    box-shadow: none;\n}\n.dropdown-toggle.btn-sm[data-v-7654757b] {\n    border: none;\n}\n", ""]);
+exports.push([module.i, "\n.category-edit[data-v-7654757b] {\n    display: none;\n}\n.fa[data-v-7654757b] {\n    padding-right: 10px;\n}\n", ""]);
 
 // exports
 
@@ -6949,7 +6918,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.categories-list[data-v-7ecd6b05] {\n    margin: 0 0 20px 0;\n}\n.dropdown-toggle[data-v-7ecd6b05]::after {\n    display: none;\n}\n.btn-outline-info[data-v-7ecd6b05]:focus,\n.btn-outline-info.focus[data-v-7ecd6b05] {\n    box-shadow: none;\n}\n.dropdown-toggle.btn-sm[data-v-7ecd6b05] {\n    border: none;\n}\n", ""]);
+exports.push([module.i, "\n.categories-list[data-v-7ecd6b05] {\n    margin: 0 0 20px 0;\n}\n.btn-outline-info[data-v-7ecd6b05]:focus,\n.btn-outline-info.focus[data-v-7ecd6b05] {\n    box-shadow: none;\n}\n.btn.btn-outline-info.btn-sm[data-v-7ecd6b05] {\n    border: 1px solid #6cb2eb;\n}\n", ""]);
 
 // exports
 
@@ -6987,7 +6956,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.dropdown-toggle[data-v-e00b78ea]::after {\n    display: none;\n}\n#purchase-actions.dropdown-toggle.btn-sm[data-v-e00b78ea] {\n    border: none;\n}\n.btn-outline-info[data-v-e00b78ea]:focus,\n.btn-outline-info.focus[data-v-e00b78ea] {\n    box-shadow: none;\n}\n.purchase-edit[data-v-e00b78ea] {\n    display: none;\n}\n", ""]);
+exports.push([module.i, "\n.progress[data-v-e00b78ea] {\n    height: 30px;\n    margin: 0 0 20px 0;\n}\n.progress .progress-bar[data-v-e00b78ea] {\n    font-size: 14px;\n    text-shadow: 0px 0px 1px #ffffff;\n}\n.purchase-edit[data-v-e00b78ea] {\n    display: none;\n}\n", ""]);
 
 // exports
 
@@ -38565,7 +38534,12 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _c("div", { staticClass: "container" }, [_c("router-view")], 1)
+    _c(
+      "div",
+      { staticClass: "container" },
+      [_c("router-view", { attrs: { total: _vm.total } })],
+      1
+    )
   ])
 }
 var staticRenderFns = []
@@ -38603,69 +38577,162 @@ var render = function() {
       ? _c(
           "ul",
           { staticClass: "list-group" },
-          _vm._l(_vm.categories, function(category) {
+          _vm._l(_vm.categories, function(category, index) {
             return _c(
               "li",
-              { staticClass: "list-group-item list-group-item-action" },
+              {
+                staticClass: "list-group-item list-group-item-action",
+                attrs: { id: ["category-" + index] }
+              },
               [
-                _c("div", { staticClass: "row justify-content-end" }, [
-                  _c("div", { staticClass: "col-10" }, [
+                _c("div", { staticClass: "d-flex" }, [
+                  _c("div", { staticClass: "flex-grow-1" }, [
                     category.icon
                       ? _c("i", {
-                          staticClass: "fas",
+                          staticClass: "fa",
                           class: [category.icon ? "fa-" + category.icon : ""]
                         })
                       : _vm._e(),
-                    _vm._v("  " + _vm._s(category.title) + "\n                ")
+                    _vm._v(
+                      "\n                    " +
+                        _vm._s(category.title) +
+                        "\n                "
+                    )
                   ]),
                   _vm._v(" "),
+                  _c("div", { staticClass: "align-items-center" }, [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-outline-info btn-sm",
+                        attrs: { type: "button" },
+                        on: {
+                          click: function($event) {
+                            $event.preventDefault()
+                            return _vm.onBtnClick($event, index)
+                          }
+                        }
+                      },
+                      [_c("i", { staticClass: "fas fa-ellipsis-h" })]
+                    )
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "category-edit" }, [
                   _c(
-                    "div",
+                    "form",
                     {
-                      staticClass:
-                        "col-2 justify-content-between align-items-center"
+                      staticClass: "form-row justify-content-start",
+                      on: {
+                        submit: function($event) {
+                          $event.preventDefault()
+                          return _vm.onCategorySubmit(
+                            $event,
+                            category.id,
+                            category.title
+                          )
+                        }
+                      }
                     },
                     [
-                      _c("div", { staticClass: "dropdown" }, [
-                        _vm._m(0, true),
+                      _c("div", { staticClass: "form-group col-md-6" }, [
+                        _c("label", { attrs: { for: "category-title" } }, [
+                          _vm._v("Category Name")
+                        ]),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: category.title,
+                              expression: "category.title"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: { id: "category-title" },
+                          domProps: { value: category.title },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(category, "title", $event.target.value)
+                            }
+                          }
+                        })
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "form-group col-md-6" }, [
+                        _c("label", [_vm._v("Choose icon")]),
                         _vm._v(" "),
                         _c(
                           "div",
                           {
-                            staticClass: "dropdown-menu",
-                            attrs: { "aria-labelledby": "caegory-actions" }
+                            staticClass: "flex-wrap icons-list",
+                            attrs: { role: "group" }
                           },
                           [
-                            _c(
-                              "button",
-                              {
-                                staticClass: "dropdown-item",
-                                attrs: {
-                                  "data-toggle": "modal",
-                                  type: "button"
-                                },
-                                on: {
-                                  click: function($event) {
-                                    $event.preventDefault()
-                                    return _vm.onEditClicked($event)
-                                  }
-                                }
-                              },
-                              [_vm._v("Edit")]
-                            ),
+                            _c("input", {
+                              staticClass: "form-control category-icon",
+                              attrs: { type: "hidden", name: "category-icon" },
+                              domProps: { value: category.icon }
+                            }),
                             _vm._v(" "),
-                            _c(
-                              "button",
-                              {
-                                staticClass: "dropdown-item",
-                                on: {
-                                  click: function($event) {
-                                    $event.preventDefault()
-                                    return _vm.onDelete($event, category.id)
+                            _vm._l(_vm.icons, function(icon) {
+                              return _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-outline-info",
+                                  class: [
+                                    category.icon === icon ? "active" : ""
+                                  ],
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      $event.preventDefault()
+                                      return _vm.onIconClick($event, icon)
+                                    }
                                   }
-                                }
-                              },
-                              [_vm._v("Delete")]
+                                },
+                                [
+                                  _c("i", {
+                                    staticClass: "fas",
+                                    class: ["fa-" + icon]
+                                  })
+                                ]
+                              )
+                            })
+                          ],
+                          2
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "form-group col-md-6" }, [
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-outline-primary",
+                            attrs: { type: "submit" }
+                          },
+                          [_vm._v("Update")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-outline-danger",
+                            attrs: { type: "button" },
+                            on: {
+                              click: function($event) {
+                                $event.preventDefault()
+                                return _vm.onDelete($event, category.id)
+                              }
+                            }
+                          },
+                          [
+                            _vm._v(
+                              "\n                            Delete\n                        "
                             )
                           ]
                         )
@@ -38678,205 +38745,10 @@ var render = function() {
           }),
           0
         )
-      : _vm._e(),
-    _vm._v(" "),
-    _c(
-      "div",
-      {
-        staticClass: "modal fade",
-        attrs: {
-          id: "add-category-form",
-          tabindex: "-1",
-          role: "dialog",
-          "aria-labelledby": "modal-title",
-          "aria-hidden": "true"
-        }
-      },
-      [
-        _c(
-          "div",
-          {
-            staticClass: "modal-dialog modal-dialog-centered",
-            attrs: { role: "document" }
-          },
-          [
-            _c("div", { staticClass: "modal-content" }, [
-              _vm._m(1),
-              _vm._v(" "),
-              _c("div", { staticClass: "modal-body" }, [
-                _c(
-                  "form",
-                  {
-                    staticClass: "form-row justify-content-start",
-                    on: {
-                      submit: function($event) {
-                        $event.preventDefault()
-                        return _vm.onCategorySubmit($event)
-                      }
-                    }
-                  },
-                  [
-                    _c("div", { staticClass: "form-group col-md-6" }, [
-                      _c("label", { attrs: { for: "category-title" } }, [
-                        _vm._v("Category Name")
-                      ]),
-                      _vm._v(" "),
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.category.title,
-                            expression: "category.title"
-                          }
-                        ],
-                        staticClass: "form-control",
-                        attrs: { id: "category-title" },
-                        domProps: { value: _vm.category.title },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.$set(_vm.category, "title", $event.target.value)
-                          }
-                        }
-                      })
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-group col-md-6" }, [
-                      _c("label", { attrs: { for: "category-icon" } }, [
-                        _vm._v("Choose icon")
-                      ]),
-                      _vm._v(" "),
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.category.icon,
-                            expression: "category.icon"
-                          }
-                        ],
-                        staticClass: "form-control",
-                        attrs: { id: "category-icon", type: "hidden" },
-                        domProps: { value: _vm.category.icon },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.$set(_vm.category, "icon", $event.target.value)
-                          }
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c(
-                        "div",
-                        {
-                          staticClass: "flex-wrap icons-list",
-                          attrs: { role: "group" }
-                        },
-                        _vm._l(_vm.icons, function(icon) {
-                          return _c(
-                            "button",
-                            {
-                              staticClass: "btn btn-outline-info",
-                              attrs: { type: "button" },
-                              on: {
-                                click: function($event) {
-                                  return _vm.onIconClick($event, icon)
-                                }
-                              }
-                            },
-                            [
-                              _c("i", {
-                                staticClass: "fas",
-                                class: ["fa-" + icon]
-                              })
-                            ]
-                          )
-                        }),
-                        0
-                      )
-                    ]),
-                    _vm._v(" "),
-                    _vm._m(2)
-                  ]
-                )
-              ])
-            ])
-          ]
-        )
-      ]
-    )
+      : _vm._e()
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "button",
-      {
-        staticClass: "btn btn-outline-info dropdown-toggle btn-sm",
-        attrs: {
-          type: "button",
-          id: "caegory-actions",
-          "data-toggle": "dropdown",
-          "aria-haspopup": "true",
-          "aria-expanded": "false"
-        }
-      },
-      [_c("i", { staticClass: "fas fa-ellipsis-h" })]
-    )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "modal-header" }, [
-      _c("h5", { staticClass: "modal-title", attrs: { id: "modal-title" } }, [
-        _vm._v("Edit category")
-      ]),
-      _vm._v(" "),
-      _c(
-        "button",
-        {
-          staticClass: "close",
-          attrs: {
-            type: "button",
-            "data-dismiss": "modal",
-            "aria-label": "Close"
-          }
-        },
-        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
-      )
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "form-group col-md-6" }, [
-      _c(
-        "button",
-        { staticClass: "btn btn-outline-primary", attrs: { type: "submit" } },
-        [_vm._v("Add")]
-      ),
-      _vm._v(" "),
-      _c(
-        "button",
-        {
-          staticClass: "btn btn-outline-secondary",
-          attrs: { type: "button", "data-dismiss": "modal" }
-        },
-        [_vm._v("Close")]
-      )
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -39505,6 +39377,23 @@ var render = function() {
     "div",
     { staticClass: "purchases" },
     [
+      _c("div", { staticClass: "progress" }, [
+        _c(
+          "div",
+          {
+            staticClass: "progress-bar",
+            style: { width: _vm.summaryP + "%" },
+            attrs: {
+              role: "progressbar",
+              "aria-valuenow": _vm.summaryP,
+              "aria-valuemin": "0",
+              "aria-valuemax": "100"
+            }
+          },
+          [_vm._v(_vm._s(_vm.summary))]
+        )
+      ]),
+      _vm._v(" "),
       _vm.message
         ? _c(
             "div",
@@ -39569,46 +39458,19 @@ var render = function() {
                     ]),
                     _vm._v(" "),
                     _c("div", { staticClass: "col-sm-1 col-4 " }, [
-                      _c("div", { staticClass: "dropdown" }, [
-                        _vm._m(0, true),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          {
-                            staticClass: "dropdown-menu",
-                            attrs: { "aria-labelledby": "purchase-actions" }
-                          },
-                          [
-                            _c(
-                              "button",
-                              {
-                                staticClass: "dropdown-item",
-                                on: {
-                                  click: function($event) {
-                                    $event.preventDefault()
-                                    return _vm.onEdit($event, index)
-                                  }
-                                }
-                              },
-                              [_vm._v("Edit")]
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "button",
-                              {
-                                staticClass: "dropdown-item",
-                                on: {
-                                  click: function($event) {
-                                    $event.preventDefault()
-                                    return _vm.onDelete($event, purchase.id)
-                                  }
-                                }
-                              },
-                              [_vm._v("Delete")]
-                            )
-                          ]
-                        )
-                      ])
+                      _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-outline-info btn-sm",
+                          on: {
+                            click: function($event) {
+                              $event.preventDefault()
+                              return _vm.onBtnClick($event, index)
+                            }
+                          }
+                        },
+                        [_c("i", { staticClass: "fas fa-ellipsis-h" })]
+                      )
                     ])
                   ]),
                   _vm._v(" "),
@@ -39818,21 +39680,6 @@ var render = function() {
                               }
                             },
                             [_vm._v("Delete")]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "button",
-                            {
-                              staticClass: "btn btn-outline-secondary",
-                              attrs: { type: "button", disabled: _vm.saving },
-                              on: {
-                                click: function($event) {
-                                  $event.preventDefault()
-                                  return _vm.onClose($event, index)
-                                }
-                              }
-                            },
-                            [_vm._v("Close")]
                           )
                         ])
                       ]
@@ -39848,27 +39695,7 @@ var render = function() {
     1
   )
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "button",
-      {
-        staticClass: "btn btn-outline-info dropdown-toggle btn-sm",
-        attrs: {
-          type: "button",
-          id: "purchase-actions",
-          "data-toggle": "dropdown",
-          "aria-haspopup": "true",
-          "aria-expanded": "false"
-        }
-      },
-      [_c("i", { staticClass: "fas fa-ellipsis-h" })]
-    )
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
