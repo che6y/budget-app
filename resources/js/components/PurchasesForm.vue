@@ -24,7 +24,7 @@
             </div>
         </form>
 
-        <categories-index :on-category-click="onCategoryClick" :categories="categories"></categories-index>
+        <categories-list :on-category-icon-click="onCategoryIconClick" :categories="categories"></categories-list>
     </div>
 </template>
 
@@ -33,7 +33,7 @@
 
     export default {
         name: "PurchasesForm",
-        props: ['purchases','categories'],
+        props: ['purchases','categories', 'summary', 'changeSummary'],
         data() {
             return {
                 error: null,
@@ -43,7 +43,7 @@
                     title: "",
                     cost: "",
                     amount: 1,
-                    icon: null,
+                    icon: '',
                     category_id: null,
                     user_id: null
                 },
@@ -67,13 +67,18 @@
                     category_id: this.purchase.category_id,
                     user_id: document.querySelector("meta[name='user-id']").getAttribute('content')
                 }).then( (response) => {
-                    var purchase_arr = response.data.data;
+                    this.changeSummary( this.purchase.amount * this.purchase.cost, '+' );
+
+                    let purchase_arr = response.data.data;
                     this.purchases.unshift(purchase_arr);
+                    this.message = 'Purchase Added';
                     this.purchase.title = '';
                     this.purchase.cost = '';
                     this.purchase.amount = 1;
+                    this.purchase.category_id = null;
+                    this.purchase.icon = '';
 
-                    this.message = 'Purchase Added';
+                    $('.btn-outline-info').removeClass('active');
                     setTimeout(() => this.message = null, 3000);
 
                 }).catch( error => {
@@ -81,14 +86,18 @@
                     setTimeout(() => this.error = null, 3000);
                 }).then(_ => this.saving = false);
             },
-            onCategoryClick( event, categoryID, categoryIcon ) {
-                this.purchase.category_id = categoryID;
-                this.purchase.icon   = categoryIcon;
-                $( event.target )
-                    .closest('button')
-                    .addClass('active')
-                    .siblings()
-                    .removeClass('active');
+            onCategoryIconClick( event, categoryID, categoryIcon ) {
+                let closest_btn = $( event.target ).closest('button');
+
+                if ( closest_btn.hasClass('active') ){
+                    this.purchase.category_id = null;
+                    this.purchase.icon        = '';
+                    closest_btn.removeClass('active');
+                } else {
+                    this.purchase.category_id = categoryID;
+                    this.purchase.icon        = categoryIcon;
+                    closest_btn.addClass('active').siblings().removeClass('active');
+                }
             },
 
         }

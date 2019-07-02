@@ -10,7 +10,8 @@
             {{ error }}
         </div>
 
-        <purchases-form :purchases="purchases" :categories="categories"></purchases-form>
+        <purchases-form :purchases="purchases" :categories="categories" :summary="summary"
+                        :change-summary="changeSummary"></purchases-form>
 
 <!--        TODO: IMPROVEMENT: Add ability to choose day/week/month/year -->
 <!--        <nav>-->
@@ -30,7 +31,7 @@
                         class="list-group-item list-group-item-action">
                         <div class="row justify-content-end">
                             <div class="col-sm-5 col-4">
-                                <i v-if="purchase.icon" class="fas" :class="[purchase.icon ? 'fa-' + purchase.icon : '']"></i>
+                                <i v-if="purchase.icon" class="fa" :class="[purchase.icon ? 'fa-' + purchase.icon : '']"></i>
                                 {{ purchase.title }}
                             </div>
                             <div class="col-sm-3 col-4">
@@ -73,7 +74,7 @@
                                 <div class="form-group col-md-6">
                                     <button class="btn btn-outline-primary" type="submit" :disabled="saving">Update</button>
                                     <button class="btn btn-outline-danger" :disabled="saving"
-                                            @click.prevent="onDelete($event, purchase.id)">Delete</button>
+                                            @click.prevent="onDelete($event, purchase)">Delete</button>
                                 </div>
                             </form>
                         </div>
@@ -102,13 +103,16 @@
                 purchases: null,
                 categories: null,
                 summary: this.total,
-                summaryP: null,
             };
+        },
+        computed: {
+            summaryP: function () {
+                return this.summary/118000 * 100;
+            },
         },
         created() {
             this.fetchPurchaseData();
             this.fetchCategoryData();
-            this.summaryP = this.summary/118000 * 100;
         },
         methods: {
             fetchCategoryData() {
@@ -154,11 +158,14 @@
                     console.log(error);
                 }).then(_ => this.saving = false);
             },
-            onDelete( event, id ) {
+            onDelete( event, purchase ) {
                 this.saving = true;
+                let number = purchase.amount * purchase.cost;
                 $(event.target).closest('.list-group-item').hide();
-                purchases_api.delete( id )
+                purchases_api.delete( purchase.id )
                     .then(( response ) => {
+                        this.changeSummary( number, '-');
+
                         this.message = 'Item Deleted';
                         this.saving = false;
                         setTimeout(() => this.message = null, 3000);
@@ -175,10 +182,16 @@
                     parent.find('.purchase-edit').hide();
                 }
             },
+            changeSummary( number, sign ) {
+                if ( sign === '+' )
+                    this.summary += number;
+                else
+                    this.summary -= number;
+            },
             //TODO: Change icone on category change in the Purchase Edit
             // changeIcon( event ){
             //     const value = $(event.target).val();
-            // }
+            // },
         }
     }
 </script>
@@ -194,5 +207,8 @@
     }
     .purchase-edit {
         display: none;
+    }
+    .fa {
+        padding-right: 10px;
     }
 </style>

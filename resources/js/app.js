@@ -21,7 +21,7 @@ const CategoriesList  = require('./components/CategoriesList').default;
 
 Vue.component( 'purchases-form', PurchasesForm );
 Vue.component( 'purchase-edit', PurchasesEdit );
-Vue.component( 'categories-index', CategoriesList );
+Vue.component( 'categories-list', CategoriesList );
 
 const router = new VueRouter({
     mode: 'history',
@@ -36,7 +36,7 @@ const router = new VueRouter({
             name: 'categories.index',
             component: CategoriesIndex
         },
-    ],
+    ]
 });
 
 const app = new Vue({

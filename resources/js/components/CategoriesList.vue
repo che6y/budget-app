@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="flex-wrap categories-list" role="group">
-            <button v-for="category in categories" @click="onCategoryClick($event, category.id,
+            <button v-for="category in categories" @click="onCategoryIconClick($event, category.id,
             category.icon )" type="button" class="btn btn-outline-info btn-sm">{{ category.title }}
                 <i v-if="category.icon" class="fas" v-bind:class="[category.icon ? 'fa-' + category.icon : '']"></i>
             </button><button class="btn btn-outline-info btn-sm" data-toggle="modal" data-target="#add-category-form" type="button">
@@ -33,7 +33,7 @@
                                 <input class="form-control" id="category-icon" type="hidden" v-model="category.icon" />
 
                                 <div class="flex-wrap icons-list" role="group">
-                                    <button v-for="icon in icons" v-on:click="onIconClick( $event, icon )" type="button"
+                                    <button v-for="icon in icons" v-on:click="changeCategoryIcon( $event, icon )" type="button"
                                             class="btn btn-outline-info" >
                                         <i class="fas" v-bind:class="[ 'fa-' + icon]"></i>
                                     </button>
@@ -57,7 +57,7 @@
     import icons from '../icons';
 
     export default {
-        props: ['onCategoryClick', 'categories'],
+        props: ['onCategoryIconClick', 'categories'],
         data(){
             return {
                 message: null,
@@ -82,19 +82,21 @@
                     setTimeout(() => this.message = null, 3000);
                     this.categories.unshift(response.data.data);
                     this.category.title = '';
-                    this.category.icon = null;
+                    this.category.icon  = null;
                 }).catch( error => {
                     this.error = 'Something went wrong, please try again later';
                     setTimeout(() => this.error = null, 3000);
                 });
             },
-            onIconClick ( event, icon ) {
+            changeCategoryIcon ( event, icon ) {
                 this.category.icon = icon;
-                $( event.target )
-                    .closest('button')
-                    .addClass('active')
-                    .siblings()
-                    .removeClass('active');
+                let closest_btn    = $( event.target ).closest('button');
+                if ( closest_btn.hasClass('active') ){
+                    closest_btn.removeClass('active');
+                } else {
+                    closest_btn.addClass('active').siblings().removeClass('active');
+                    $( event.target ).closest('.category-icon').val(icon);
+                }
             },
         },
 

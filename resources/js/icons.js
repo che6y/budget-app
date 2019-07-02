@@ -3,8 +3,10 @@ const icons = [
     'bus-alt',
     'camera',
     'carrot',
+    'drumstick-bite',
     'gamepad',
     'graduation-cap',
+    'hamburger',
     'laptop',
     'tooth',
     'coffee',
@@ -16,8 +18,11 @@ const icons = [
     'tshirt',
     'wallet',
     'tv',
+    'poop',
+    'utensils',
     'lightbulb',
     'heartbeat',
+    'skull-crossbones',
     'gift'
 ];
 export default icons;

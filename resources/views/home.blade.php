@@ -4,9 +4,13 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-10">
-            <?php if (Auth::check()): ?>
+            @if (Auth::check())
                 <app :total="{{ $total }}"></app>
-           <?php endif; ?>
+           @else
+                <h3>
+                    Sorry, you don't have permissions to access this page!
+                </h3>
+            @endif
         </div>
     </div>
 </div>

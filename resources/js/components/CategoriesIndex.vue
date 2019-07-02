@@ -16,8 +16,7 @@
                 </div>
 
                 <div class="category-edit">
-                    <form class="form-row justify-content-start" @submit.prevent="onCategorySubmit($event, category.id,
-                    category.title)">
+                    <form class="form-row justify-content-start" @submit.prevent="onCategorySubmit($event, category)">
                         <div class="form-group col-md-6">
                             <label for="category-title">Category Name</label>
                             <input class="form-control" id="category-title" v-model="category.title" />
@@ -27,7 +26,8 @@
                             <div class="flex-wrap icons-list" role="group">
                                 <input class="form-control category-icon" type="hidden" name="category-icon" :value="category.icon" />
 
-                                <button v-for="icon in icons" @click.prevent="onIconClick( $event, icon )" type="button"
+                                <button v-for="icon in icons" @click.prevent="changeCategoryIcon( $event, icon, category )"
+                                        type="button"
                                         class="btn btn-outline-info" :class="[category.icon === icon ? 'active' : '']" >
                                     <i class="fas" v-bind:class="[ 'fa-' + icon]"></i>
                                 </button>
@@ -77,13 +77,12 @@
                     this.error = error.response.data.message || error.message;
                 });
             },
-            onCategorySubmit( event, id, title ) {
-                let category_icon = $('#category-icon').val();
-                console.log(category_icon);
-                categories_api.post( {
-                    id   : id,
-                    title: title,
-                    icon : category_icon,
+            onCategorySubmit( event, category ) {
+                console.log(typeof category.icon);
+                categories_api.update( category.id, {
+                    id: category.id,
+                    title: category.title,
+                    icon : category.icon
                 }).then( (response) => {
                     this.message = 'Category Updated';
                     setTimeout(() => this.message = null, 3000);
@@ -103,7 +102,7 @@
                     });
             },
             onBtnClick( event, index ) {
-                const parent = $(event.target).closest('#category-'+index);
+                const parent = $(event.target).closest('#category-' + index);
 
                 if ( parent.find('.category-edit').css('display') === 'none' ){
                     parent.find('.category-edit').show();
@@ -112,15 +111,8 @@
                     parent.find('.category-edit').hide();
                 }
             },
-            onIconClick ( event, icon ) {
-                $( event.target )
-                    .closest('button')
-                    .addClass('active')
-                    .siblings()
-                    .removeClass('active');
-                $( event.target ).closest('.category-icon').val(icon);
-                console.log($( event.target ).closest('.category-icon'));
-                console.log($( event.target ).closest('.category-icon').val());
+            changeCategoryIcon( event, icon, category ) {
+                category.icon = icon;
             },
         },
 
