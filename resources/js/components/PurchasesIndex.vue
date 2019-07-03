@@ -1,8 +1,11 @@
 <template>
     <div class="purchases">
         <div class="progress">
-            <div class="progress-bar" role="progressbar" :aria-valuenow="summaryP"
-                 aria-valuemin="0" aria-valuemax="100" :style="{ width: summaryP + '%' }">{{ summary }}</div>
+            <div class="progress-bar" role="progressbar" :aria-valuenow="barWidth"
+                 aria-valuemin="0" aria-valuemax="100" :style="{ width: barWidth + '%',
+                 backgroundColor:'hsl('+(110-barWidth)+',100%,45%' }">
+                {{ summary }}
+            </div>
         </div>
         <div v-if="message" class="alert alert-success" role="alert">{{ message }}</div>
 
@@ -66,7 +69,7 @@
                                 <div class="form-group col-md-6">
                                     <label for="category-id">Category</label>
                                     <select v-if="categories" id="category-id" v-model="purchase.category_id"
-                                            class="form-control" @change="changeIcon($event)">
+                                            class="form-control" @change="changeIcon($event, purchase, categories)">
                                         <option v-for="category in categories" :selected="category.id == purchase.category_id"
                                                 :value="category.id" >{{category.title }}</option>
                                     </select>
@@ -106,7 +109,7 @@
             };
         },
         computed: {
-            summaryP: function () {
+            barWidth: function () {
                 return this.summary/118000 * 100;
             },
         },
@@ -188,10 +191,14 @@
                 else
                     this.summary -= number;
             },
-            //TODO: Change icone on category change in the Purchase Edit
-            // changeIcon( event ){
-            //     const value = $(event.target).val();
-            // },
+            changeIcon( event, purchase, categories ){
+                let value = $(event.target).val();
+                for ( var i in categories ){
+                    if ( parseInt( value ) === categories[i].id ){
+                        return purchase.icon = categories[i].icon;
+                    }
+                }
+            },
         }
     }
 </script>

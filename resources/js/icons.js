@@ -23,6 +23,10 @@ const icons = [
     'lightbulb',
     'heartbeat',
     'skull-crossbones',
-    'gift'
+    'gift',
+    'shopping-cart',
+    'video',
+    'phone',
+    'tv'
 ];
 export default icons;
