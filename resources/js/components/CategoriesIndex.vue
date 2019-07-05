@@ -10,7 +10,7 @@
                     </div>
                     <div class="align-items-center">
                         <button class="btn btn-outline-info btn-sm" type="button" @click.prevent="onBtnClick($event, index)">
-                            <i class="fas fa-ellipsis-h"></i>
+                            <i class="fas fa-ellipsis-v"></i>
                         </button>
                     </div>
                 </div>

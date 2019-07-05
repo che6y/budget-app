@@ -30,3 +30,5 @@ Route::get('/categories/{category}', 'CategoryController@show');
 Route::put('/categories/{category}', 'CategoryController@update');
 Route::post('/categories/', 'CategoryController@store');
 Route::delete('/categories/{category}', 'CategoryController@destroy');
+
+Route::get('/pie-data', 'AppController@getData');

@@ -1,75 +1,68 @@
 <template>
     <div>
-        <div v-if="message" class="alert alert-success" role="alert">{{ message }}</div>
-        <form class="form-row justify-content-start" @submit.prevent="onSubmit($event)">
-            <div class="form-group col-md-6">
-                <label for="purchase_title">Title</label>
-                <input class="form-control" id="purchase_title" v-model="purchase.title" required />
-            </div>
-            <div class="form-group col-md-3">
-                <label for="purchase_cost">Price</label>
-                <input class="form-control" id="purchase_cost" type="number" v-model="purchase.cost" required />
-            </div>
-            <div class="form-group col-md-3">
-                <label for="purchase_amount">Amount</label>
-                <input class="form-control mx-sm-6" id="purchase_amount" type="number" v-model="purchase.amount" min="1" step="1" required />
-            </div>
-            <div class="form-group col-md-8">
-                <button class="btn btn-outline-primary" type="submit" :disabled="saving">
-                    Update
-                </button>
-                <button class="btn btn-outline-secondary" type="button" >Cancel</button>
-                <button class="btn btn-outline-danger" :disabled="saving" @click.prevent="onDelete($event)">Delete</button>
-            </div>
-        </form>
+        <div class="purchase-edit">
+            <form class="form-row align-items-end" @submit.prevent="onSubmit($event, purchase_i)">
+                <div class="form-group col-md-6">
+                    <label for="purchase_title">Title</label>
+                    <input class="form-control" id="purchase_title" v-model="purchase_i.title" required />
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="purchase_cost">Price</label>
+                    <input class="form-control" id="purchase_cost" type="number" v-model="purchase_i.cost" required />
+                </div>
+
+                <div class="form-group col-md-3">
+                    <label for="purchase_amount">Amount</label>
+                    <input class="form-control mx-sm-6" id="purchase_amount" type="number" v-model="purchase_i.amount" min="1" step="1" required />
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="category-id">Category</label>
+                    <select v-if="categories" id="category-id" v-model="purchase_i.category_id"
+                            class="form-control" @change="changeIcon($event, purchase_i, categories)">
+                        <option v-for="category in categories" :selected="category.id === purchase_i.category_id"
+                                :value="category.id" >{{category.title }}</option>
+                    </select>
+                </div>
+                <!--                                <div class="form-group col-md-3">-->
+                <!--                                    <label for="purchase_date">Date</label>-->
+                <!--                                    <input class="form-control mx-sm-6" id="purchase_date" type="text"-->
+                <!--                                           v-model="purchase.created_at" />-->
+                <!--                                </div>-->
+                <div class="form-group col-md-3">
+                    <button class="btn btn-outline-primary" type="submit" :disabled="saving">Update</button>
+                    <button class="btn btn-outline-danger" :disabled="saving"
+                            @click.prevent="onDelete($event, purchase_i)">Delete</button>
+                </div>
+            </form>
+        </div>
     </div>
 </template>
 <script>
     import api from '../api/purchases';
+    import $ from 'jquery';
+    import datepickerFactory from 'jquery-datepicker';
+
+    datepickerFactory($);
 
     export default {
-        props: [ 'item' ],
+        props: [ 'purchase', 'categories', 'onSubmit', 'onDelete', 'changeIcon' ],
         data() {
             return {
                 message: null,
                 saving:false,
                 loaded: false,
-                purchase: this.item
+                purchase_i: this.purchase
             };
         },
         methods: {
-            onSubmit( event ) {
-                this.saving = true;
-
-                api.update(this.purchase.id, {
-                    title: this.purchase.title,
-                    cost: this.purchase.cost,
-                    amount: this.purchase.amount,
-                    category_id: this.purchase.category_id,
-                }).then((response) => {
-                    this.message = 'Purchase updated';
-                    setTimeout(() => this.message = null, 3000);
-                    this.purchase = response.data.data;
-                }).catch(error => {
-                    console.log(error)
-                }).then(_ => this.saving = false);
-            },
-            onDelete() {
-                this.saving = true;
-
-                api.delete(this.purchase.id)
-                    .then((response) => {
-                        this.message = 'Item Deleted';
-                        setTimeout(() => this.message = null, 3000);
-                    });
-            },
         },
         created() {
-            api.find(this.purchase.id).then((response) => {
-                this.loaded = true;
-                this.purchase = response.data.data;
-            });
         }
     };
 
 </script>
+<style scoped>
+    .purchase-edit {
+        display: none;
+    }
+</style>

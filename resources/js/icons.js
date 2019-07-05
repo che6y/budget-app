@@ -11,6 +11,7 @@ const icons = [
     'tooth',
     'coffee',
     'home',
+    'hotdog',
     'egg',
     'sad-cry',
     'angry',

@@ -1,5 +1,7 @@
 <template>
     <div class="purchases">
+        <canvas width="600" height="500"></canvas>
+
         <div class="progress">
             <div class="progress-bar" role="progressbar" :aria-valuenow="barWidth"
                  aria-valuemin="0" aria-valuemax="100" :style="{ width: barWidth + '%',
@@ -9,9 +11,7 @@
         </div>
         <div v-if="message" class="alert alert-success" role="alert">{{ message }}</div>
 
-        <div v-if="error" class="alert alert-danger" role="alert">
-            {{ error }}
-        </div>
+        <div v-if="error" class="alert alert-danger" role="alert">{{ error }}</div>
 
         <purchases-form :purchases="purchases" :categories="categories" :summary="summary"
                         :change-summary="changeSummary"></purchases-form>
@@ -41,46 +41,17 @@
                                 {{ purchase.cost * purchase.amount }} baht
                             </div>
                             <div class="col-sm-3 col-4">
-                                {{ purchase.created_at }}
+                                {{ formatDate(purchase.created_at) }}
                             </div>
-                            <div class="col-sm-1 col-4 ">
+                            <div class="col-sm-1 col-4 text-right">
                                 <button class="btn btn-outline-info btn-sm" @click.prevent="onBtnClick( $event, index )">
-                                    <i class="fas fa-ellipsis-h"></i>
+                                    <i class="fas fa-ellipsis-v"></i>
                                 </button>
                             </div>
                         </div>
-<!--                        <purchase-edit :item="purchase" ></purchase-edit>-->
-                        <div class="purchase-edit">
-                            <form class="form-row align-items-end" @submit.prevent="onSubmit($event, purchase.id,
-                            purchase.title, purchase.cost, purchase.amount, purchase.category_id)">
-                                <div class="form-group col-md-6">
-                                    <label for="purchase_title">Title</label>
-                                    <input class="form-control" id="purchase_title" v-model="purchase.title" required />
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <label for="purchase_cost">Price</label>
-                                    <input class="form-control" id="purchase_cost" type="number" v-model="purchase.cost" required />
-                                </div>
+                        <purchase-edit :purchase="purchase" :categories="categories" :on-submit="onSubmit"
+                                       :on-delete="onDelete" :changeIcon="changeIcon"></purchase-edit>
 
-                                <div class="form-group col-md-3">
-                                    <label for="purchase_amount">Amount</label>
-                                    <input class="form-control mx-sm-6" id="purchase_amount" type="number" v-model="purchase.amount" min="1" step="1" required />
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="category-id">Category</label>
-                                    <select v-if="categories" id="category-id" v-model="purchase.category_id"
-                                            class="form-control" @change="changeIcon($event, purchase, categories)">
-                                        <option v-for="category in categories" :selected="category.id == purchase.category_id"
-                                                :value="category.id" >{{category.title }}</option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <button class="btn btn-outline-primary" type="submit" :disabled="saving">Update</button>
-                                    <button class="btn btn-outline-danger" :disabled="saving"
-                                            @click.prevent="onDelete($event, purchase)">Delete</button>
-                                </div>
-                            </form>
-                        </div>
                     </li>
                 </ul>
 <!--        TODO: END -->
@@ -94,6 +65,7 @@
 <script>
     import axios from 'axios';
     import purchases_api from '../api/purchases';
+    import * as d3 from 'd3';
 
     export default {
         props: [ 'total' ],
@@ -106,6 +78,7 @@
                 purchases: null,
                 categories: null,
                 summary: this.total,
+                pieData: null,
             };
         },
         computed: {
@@ -116,6 +89,10 @@
         created() {
             this.fetchPurchaseData();
             this.fetchCategoryData();
+            this.fetchPieData();
+        },
+        mounted() {
+
         },
         methods: {
             fetchCategoryData() {
@@ -145,14 +122,25 @@
                     });
 
             },
-            onSubmit( event, id, title, cost, amount, cat_id ) {
+            fetchPieData() {
+                axios
+                    .get( '/api/pie-data' )
+                    .then( response => {
+                        this.pieData = response.data;
+                        this.createPie();
+                    }).catch( error => {
+                    this.error = error.response.data.message || error.message;
+                });
+            },
+            onSubmit( event, purchase ) {
                 this.saving = true;
 
-                purchases_api.update(id, {
-                    title: title,
-                    cost: cost,
-                    amount: amount,
-                    category_id: cat_id,
+                purchases_api.update(purchase.id, {
+                    title: purchase.title,
+                    cost: purchase.cost,
+                    amount: purchase.amount,
+                    category_id: purchase.category_id,
+                    created_at: purchase.created_at
                 }).then((response) => {
                     this.message = 'Purchase updated';
                     setTimeout(() => this.message = null, 3000);
@@ -170,7 +158,6 @@
                         this.changeSummary( number, '-');
 
                         this.message = 'Item Deleted';
-                        this.saving = false;
                         setTimeout(() => this.message = null, 3000);
                         $('.purchase-edit').hide();
                     });
@@ -179,17 +166,18 @@
                 const parent = $(event.target).closest('#purchase-'+index);
 
                 if ( parent.find('.purchase-edit').css('display') === 'none' ){
+                    // $('#purchase_date').datepicker({
+                    //     dateFormat: "yy-mm-dd",
+                    //     changeMonth: true,
+                    //     minDate: '-1y',
+                    //     maxDate: '+1m'
+                    // });
+
                     parent.find('.purchase-edit').show();
                     parent.siblings().find('.purchase-edit').hide();
                 } else {
                     parent.find('.purchase-edit').hide();
                 }
-            },
-            changeSummary( number, sign ) {
-                if ( sign === '+' )
-                    this.summary += number;
-                else
-                    this.summary -= number;
             },
             changeIcon( event, purchase, categories ){
                 let value = $(event.target).val();
@@ -199,6 +187,164 @@
                     }
                 }
             },
+            changeSummary( number, sign ) {
+                if ( sign === '+' )
+                    this.summary += number;
+                else
+                    this.summary -= number;
+            },
+            formatDate( date ) {
+                var d        = new Date(date),
+                    month    = '' + d.getMonth(),
+                    day      = '' + d.getDate(),
+                    monthArr = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+                return day + ' ' + monthArr[month];
+            },
+            createPie( ) {
+                var svg = d3.select("body")
+                    .append("svg")
+                    .append("g")
+
+                svg.append("g")
+                    .attr("class", "slices");
+                svg.append("g")
+                    .attr("class", "labels");
+                svg.append("g")
+                    .attr("class", "lines");
+
+                var width = 960,
+                    height = 450,
+                    radius = Math.min(width, height) / 2;
+
+                var pie = d3.layout.pie()
+                    .sort(null)
+                    .value(function(d) {
+                        return d.value;
+                    });
+
+                var arc = d3.svg.arc()
+                    .outerRadius(radius * 0.8)
+                    .innerRadius(radius * 0.4);
+
+                var outerArc = d3.svg.arc()
+                    .innerRadius(radius * 0.9)
+                    .outerRadius(radius * 0.9);
+
+                svg.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+                var key = function(d){ return d.title; };
+
+                var color = d3.scale.ordinal()
+                    .domain(["Lorem ipsum", "dolor sit", "amet", "consectetur", "adipisicing", "elit", "sed", "do", "eiusmod", "tempor", "incididunt"])
+                    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+
+                function randomData (){
+                    var labels = color.domain();
+                    return labels.map(function(label){
+                        return { label: label, value: Math.random() }
+                    });
+                }
+
+                change(randomData());
+
+                d3.select(".randomize")
+                    .on("click", function(){
+                        change(randomData());
+                    });
+
+
+                function change(data) {
+
+                    /* ------- PIE SLICES -------*/
+                    var slice = svg.select(".slices").selectAll("path.slice")
+                        .data(pie(data), key);
+
+                    slice.enter()
+                        .insert("path")
+                        .style("fill", function(d) { return color(d.data.label); })
+                        .attr("class", "slice");
+
+                    slice
+                        .transition().duration(1000)
+                        .attrTween("d", function(d) {
+                            this._current = this._current || d;
+                            var interpolate = d3.interpolate(this._current, d);
+                            this._current = interpolate(0);
+                            return function(t) {
+                                return arc(interpolate(t));
+                            };
+                        })
+
+                    slice.exit()
+                        .remove();
+
+                    /* ------- TEXT LABELS -------*/
+
+                    var text = svg.select(".labels").selectAll("text")
+                        .data(pie(this.pieData), key);
+
+                    text.enter()
+                        .append("text")
+                        .attr("dy", ".35em")
+                        .text(function(d) {
+                            return d.data.label;
+                        });
+
+                    function midAngle(d){
+                        return d.startAngle + (d.endAngle - d.startAngle)/2;
+                    }
+
+                    text.transition().duration(1000)
+                        .attrTween("transform", function(d) {
+                            this._current = this._current || d;
+                            var interpolate = d3.interpolate(this._current, d);
+                            this._current = interpolate(0);
+                            return function(t) {
+                                var d2 = interpolate(t);
+                                var pos = outerArc.centroid(d2);
+                                pos[0] = radius * (midAngle(d2) < Math.PI ? 1 : -1);
+                                return "translate("+ pos +")";
+                            };
+                        })
+                        .styleTween("text-anchor", function(d){
+                            this._current = this._current || d;
+                            var interpolate = d3.interpolate(this._current, d);
+                            this._current = interpolate(0);
+                            return function(t) {
+                                var d2 = interpolate(t);
+                                return midAngle(d2) < Math.PI ? "start":"end";
+                            };
+                        });
+
+                    text.exit()
+                        .remove();
+
+                    /* ------- SLICE TO TEXT POLYLINES -------*/
+
+                    var polyline = svg.select(".lines").selectAll("polyline")
+                        .data(pie(data), key);
+
+                    polyline.enter()
+                        .append("polyline");
+
+                    polyline.transition().duration(1000)
+                        .attrTween("points", function(d){
+                            this._current = this._current || d;
+                            var interpolate = d3.interpolate(this._current, d);
+                            this._current = interpolate(0);
+                            return function(t) {
+                                var d2 = interpolate(t);
+                                var pos = outerArc.centroid(d2);
+                                pos[0] = radius * 0.95 * (midAngle(d2) < Math.PI ? 1 : -1);
+                                return [arc.centroid(d2), outerArc.centroid(d2), pos];
+                            };
+                        });
+
+                    polyline.exit()
+                        .remove();
+                };
+            }
         }
     }
 </script>
@@ -211,9 +357,6 @@
     .progress .progress-bar {
         font-size: 14px;
         text-shadow: 0px 0px 1px #ffffff;
-    }
-    .purchase-edit {
-        display: none;
     }
     .fa {
         padding-right: 10px;

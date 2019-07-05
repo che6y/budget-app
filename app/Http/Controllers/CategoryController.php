@@ -16,7 +16,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $category = Category::orderBy('created_at', 'desc')
+        $category = Category::orderBy('usage', 'desc')
             ->take(30)
             ->get();
 
@@ -73,7 +73,7 @@ class CategoryController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
+     * 
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */

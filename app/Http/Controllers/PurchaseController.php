@@ -42,6 +42,10 @@ class PurchaseController extends Controller
         ]);
 
         $purchase = Purchase::create( $data );
+        $category = $purchase->category;
+        $usage    = $category->usage;
+        $category->update( [ 'usage' => ++$usage ] );
+
         return new PurchaseResource($purchase);
     }
 
@@ -69,7 +73,7 @@ class PurchaseController extends Controller
             'title'       => 'required|min:3|max:255',
             'amount'      => 'numeric',
             'cost'        => 'required|numeric',
-            'category_id' => 'required|numeric',
+            'category_id' => 'required|numeric'
         ]);
 
         $purchase->update($data);
