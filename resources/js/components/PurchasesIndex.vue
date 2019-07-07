@@ -1,21 +1,20 @@
 <template>
     <div class="purchases">
-        <canvas width="600" height="500"></canvas>
 
-        <div class="progress">
-            <div class="progress-bar" role="progressbar" :aria-valuenow="barWidth"
-                 aria-valuemin="0" aria-valuemax="100" :style="{ width: barWidth + '%',
-                 backgroundColor:'hsl('+(110-barWidth)+',100%,45%' }">
-                {{ summary }}
-            </div>
-        </div>
         <div v-if="message" class="alert alert-success" role="alert">{{ message }}</div>
-
         <div v-if="error" class="alert alert-danger" role="alert">{{ error }}</div>
 
-        <purchases-form :purchases="purchases" :categories="categories" :summary="summary"
-                        :change-summary="changeSummary"></purchases-form>
+        <progress-bar :summary="summary"></progress-bar>
 
+        <pie-chart></pie-chart>
+
+        <purchases-form :categories="categories" :change-summary="changeSummary" :new-purchase-to-arr="newPurchaseToArr">
+        </purchases-form>
+
+        <div class="row">
+            <div class="col-sm-6">Today's total: {{ todaysTotal }}</div>
+<!--            <div class="col-sm-6">Weeks's total: {{ weeksTotal }}</div>-->
+        </div>
 <!--        TODO: IMPROVEMENT: Add ability to choose day/week/month/year -->
 <!--        <nav>-->
 <!--            <div class="nav nav-tabs" id="nav-tab" role="tablist">-->
@@ -49,8 +48,41 @@
                                 </button>
                             </div>
                         </div>
-                        <purchase-edit :purchase="purchase" :categories="categories" :on-submit="onSubmit"
-                                       :on-delete="onDelete" :changeIcon="changeIcon"></purchase-edit>
+                        <div class="purchase-edit">
+                            <form class="form-row align-items-end" @submit.prevent="onPurchaseEdit($event, purchase)">
+                                <div class="form-group col-md-6">
+                                    <label for="purchase_title">Title</label>
+                                    <input class="form-control" id="purchase_title" v-model="purchase.title" required />
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="purchase_cost">Price</label>
+                                    <input class="form-control" id="purchase_cost" type="number" v-model="purchase.cost" required />
+                                </div>
+
+                                <div class="form-group col-md-3">
+                                    <label for="purchase_amount">Amount</label>
+                                    <input class="form-control mx-sm-6" id="purchase_amount" type="number" v-model="purchase.amount" min="1" step="1" required />
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="category-id">Category</label>
+                                    <select v-if="categories" id="category-id" v-model="purchase.category_id"
+                                            class="form-control" @change="changeIcon($event, purchase, categories)">
+                                        <option v-for="category in categories" :selected="category.id === purchase.category_id"
+                                                :value="category.id" >{{ category.title }}</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="purchase_date">Date</label>
+                                    <input class="form-control mx-sm-6" id="purchase_date" type="text"
+                                           v-model="purchase.created_at" autocomplete="off" />
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <button class="btn btn-outline-primary" type="submit" :disabled="saving">Update</button>
+                                    <button class="btn btn-outline-danger" :disabled="saving"
+                                            @click.prevent="onPurchaseDelete($event, purchase)">Delete</button>
+                                </div>
+                            </form>
+                        </div>
 
                     </li>
                 </ul>
@@ -65,10 +97,10 @@
 <script>
     import axios from 'axios';
     import purchases_api from '../api/purchases';
-    import * as d3 from 'd3';
+    import * as moment from 'moment';
 
     export default {
-        props: [ 'total' ],
+        props: [ 'total', 'weeksTotal' ],
         data() {
             return {
                 message: null,
@@ -78,21 +110,23 @@
                 purchases: null,
                 categories: null,
                 summary: this.total,
-                pieData: null,
+                todaysTotal: 0,
             };
         },
-        computed: {
-            barWidth: function () {
-                return this.summary/118000 * 100;
-            },
-        },
+
         created() {
             this.fetchPurchaseData();
             this.fetchCategoryData();
-            this.fetchPieData();
         },
-        mounted() {
-
+        watch: {
+            purchases: function (val) {
+                var today = moment();
+                this.todaysTotal = val
+                    .filter( item => moment(item.created_at).isSame(today, 'day'))
+                    .reduce((acc, curr) => {
+                        return acc + (curr.cost * curr.amount);
+                    }, 0);
+            }
         },
         methods: {
             fetchCategoryData() {
@@ -120,19 +154,13 @@
                         this.loading = false;
                         this.error = error.response.data.message || error.message;
                     });
+            },
 
+            newPurchaseToArr( newPurchase ) {
+                this.purchases.unshift(newPurchase);
             },
-            fetchPieData() {
-                axios
-                    .get( '/api/pie-data' )
-                    .then( response => {
-                        this.pieData = response.data;
-                        this.createPie();
-                    }).catch( error => {
-                    this.error = error.response.data.message || error.message;
-                });
-            },
-            onSubmit( event, purchase ) {
+
+            onPurchaseEdit( event, purchase ) {
                 this.saving = true;
 
                 purchases_api.update(purchase.id, {
@@ -140,38 +168,52 @@
                     cost: purchase.cost,
                     amount: purchase.amount,
                     category_id: purchase.category_id,
-                    created_at: purchase.created_at
+                    // created_at: purchase.created_at
                 }).then((response) => {
                     this.message = 'Purchase updated';
                     setTimeout(() => this.message = null, 3000);
                     $('.purchase-edit').hide();
+                    this.saving = false;
                 }).catch(error => {
                     console.log(error);
-                }).then(_ => this.saving = false);
+                    this.saving = false;
+                });
             },
-            onDelete( event, purchase ) {
+            onPurchaseDelete( event, purchase ) {
                 this.saving = true;
-                let number = purchase.amount * purchase.cost;
+                const sum     = purchase.amount * purchase.cost;
+                const id      = purchase.id;
+
                 $(event.target).closest('.list-group-item').hide();
-                purchases_api.delete( purchase.id )
+                purchases_api
+                    .delete( purchase.id )
                     .then(( response ) => {
-                        this.changeSummary( number, '-');
+                        this.changeSummary( sum, '-');
+                        const index = this.purchases.findIndex(function ( purchase ) {
+                            return purchase.id === id;
+                        });
+                        this.purchases.slice(index, 1);
 
                         this.message = 'Item Deleted';
                         setTimeout(() => this.message = null, 3000);
                         $('.purchase-edit').hide();
-                    });
+                    })
+                    .catch( error => {
+                        console.log(error);
+                        this.error = 'Something went wrong, please try again later';
+                        setTimeout(() => this.error = null, 3000);
+                    }).then(_ => this.saving = false);
             },
             onBtnClick( event, index ) {
                 const parent = $(event.target).closest('#purchase-'+index);
 
                 if ( parent.find('.purchase-edit').css('display') === 'none' ){
-                    // $('#purchase_date').datepicker({
-                    //     dateFormat: "yy-mm-dd",
-                    //     changeMonth: true,
-                    //     minDate: '-1y',
-                    //     maxDate: '+1m'
-                    // });
+                    $('#purchase_date').datepicker({
+                        dateFormat: "yy-mm-dd",
+                        changeMonth: true,
+                        minDate: '-1y',
+                        maxDate: '+1m'
+                    });
 
                     parent.find('.purchase-edit').show();
                     parent.siblings().find('.purchase-edit').hide();
@@ -194,163 +236,16 @@
                     this.summary -= number;
             },
             formatDate( date ) {
-                var d        = new Date(date),
-                    month    = '' + d.getMonth(),
-                    day      = '' + d.getDate(),
-                    monthArr = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-                return day + ' ' + monthArr[month];
+                return moment( date ).format( 'D MMM' );
             },
-            createPie( ) {
-                var svg = d3.select("body")
-                    .append("svg")
-                    .append("g")
+        },
 
-                svg.append("g")
-                    .attr("class", "slices");
-                svg.append("g")
-                    .attr("class", "labels");
-                svg.append("g")
-                    .attr("class", "lines");
-
-                var width = 960,
-                    height = 450,
-                    radius = Math.min(width, height) / 2;
-
-                var pie = d3.layout.pie()
-                    .sort(null)
-                    .value(function(d) {
-                        return d.value;
-                    });
-
-                var arc = d3.svg.arc()
-                    .outerRadius(radius * 0.8)
-                    .innerRadius(radius * 0.4);
-
-                var outerArc = d3.svg.arc()
-                    .innerRadius(radius * 0.9)
-                    .outerRadius(radius * 0.9);
-
-                svg.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
-
-                var key = function(d){ return d.title; };
-
-                var color = d3.scale.ordinal()
-                    .domain(["Lorem ipsum", "dolor sit", "amet", "consectetur", "adipisicing", "elit", "sed", "do", "eiusmod", "tempor", "incididunt"])
-                    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
-
-                function randomData (){
-                    var labels = color.domain();
-                    return labels.map(function(label){
-                        return { label: label, value: Math.random() }
-                    });
-                }
-
-                change(randomData());
-
-                d3.select(".randomize")
-                    .on("click", function(){
-                        change(randomData());
-                    });
-
-
-                function change(data) {
-
-                    /* ------- PIE SLICES -------*/
-                    var slice = svg.select(".slices").selectAll("path.slice")
-                        .data(pie(data), key);
-
-                    slice.enter()
-                        .insert("path")
-                        .style("fill", function(d) { return color(d.data.label); })
-                        .attr("class", "slice");
-
-                    slice
-                        .transition().duration(1000)
-                        .attrTween("d", function(d) {
-                            this._current = this._current || d;
-                            var interpolate = d3.interpolate(this._current, d);
-                            this._current = interpolate(0);
-                            return function(t) {
-                                return arc(interpolate(t));
-                            };
-                        })
-
-                    slice.exit()
-                        .remove();
-
-                    /* ------- TEXT LABELS -------*/
-
-                    var text = svg.select(".labels").selectAll("text")
-                        .data(pie(this.pieData), key);
-
-                    text.enter()
-                        .append("text")
-                        .attr("dy", ".35em")
-                        .text(function(d) {
-                            return d.data.label;
-                        });
-
-                    function midAngle(d){
-                        return d.startAngle + (d.endAngle - d.startAngle)/2;
-                    }
-
-                    text.transition().duration(1000)
-                        .attrTween("transform", function(d) {
-                            this._current = this._current || d;
-                            var interpolate = d3.interpolate(this._current, d);
-                            this._current = interpolate(0);
-                            return function(t) {
-                                var d2 = interpolate(t);
-                                var pos = outerArc.centroid(d2);
-                                pos[0] = radius * (midAngle(d2) < Math.PI ? 1 : -1);
-                                return "translate("+ pos +")";
-                            };
-                        })
-                        .styleTween("text-anchor", function(d){
-                            this._current = this._current || d;
-                            var interpolate = d3.interpolate(this._current, d);
-                            this._current = interpolate(0);
-                            return function(t) {
-                                var d2 = interpolate(t);
-                                return midAngle(d2) < Math.PI ? "start":"end";
-                            };
-                        });
-
-                    text.exit()
-                        .remove();
-
-                    /* ------- SLICE TO TEXT POLYLINES -------*/
-
-                    var polyline = svg.select(".lines").selectAll("polyline")
-                        .data(pie(data), key);
-
-                    polyline.enter()
-                        .append("polyline");
-
-                    polyline.transition().duration(1000)
-                        .attrTween("points", function(d){
-                            this._current = this._current || d;
-                            var interpolate = d3.interpolate(this._current, d);
-                            this._current = interpolate(0);
-                            return function(t) {
-                                var d2 = interpolate(t);
-                                var pos = outerArc.centroid(d2);
-                                pos[0] = radius * 0.95 * (midAngle(d2) < Math.PI ? 1 : -1);
-                                return [arc.centroid(d2), outerArc.centroid(d2), pos];
-                            };
-                        });
-
-                    polyline.exit()
-                        .remove();
-                };
-            }
-        }
     }
 </script>
 
 <style scoped>
     .progress {
+        position: relative;
         height: 30px;
         margin: 0 0 20px 0;
     }
@@ -360,5 +255,8 @@
     }
     .fa {
         padding-right: 10px;
+    }
+    .purchase-edit {
+        display: none;
     }
 </style>

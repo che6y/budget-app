@@ -62,7 +62,5 @@
 
 </script>
 <style scoped>
-    .purchase-edit {
-        display: none;
-    }
+
 </style>

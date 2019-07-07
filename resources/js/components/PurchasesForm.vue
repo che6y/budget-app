@@ -33,55 +33,55 @@
 
     export default {
         name: "PurchasesForm",
-        props: ['purchases','categories', 'summary', 'changeSummary'],
+        props: ['categories', 'changeSummary', 'newPurchaseToArr'],
         data() {
             return {
-                error: null,
-                message: null,
-                saving : false,
+                error   : null,
+                message : null,
+                saving  : false,
                 purchase: {
-                    title: "",
-                    cost: "",
-                    amount: 1,
-                    icon: '',
+                    title      : "",
+                    cost       : "",
+                    amount     : 1,
+                    icon       : '',
                     category_id: null,
-                    user_id: null
+                    user_id    : null
                 },
             }
         },
         methods: {
             onSubmit( event ) {
-                event.preventDefault();
+                this.saving = true;
 
                 if ( this.purchase.category_id === null ) {
-                    this.error = 'Please choose category';
-                    setTimeout(() => this.error = null, 1500);
+                    this.error  = 'Please choose category';
+                    this.saving = false;
+                    setTimeout(() => this.error = null, 3000);
+
                     return true;
                 }
 
-                this.saving = true;
                 purchases_api.post( {
-                    title: this.purchase.title,
-                    cost: this.purchase.cost,
-                    amount: this.purchase.amount,
+                    title      : this.purchase.title,
+                    cost       : this.purchase.cost,
+                    amount     : this.purchase.amount,
                     category_id: this.purchase.category_id,
-                    user_id: document.querySelector("meta[name='user-id']").getAttribute('content')
+                    user_id    : document.querySelector("meta[name='user-id']").getAttribute('content')
                 }).then( (response) => {
                     this.changeSummary( this.purchase.amount * this.purchase.cost, '+' );
-
-                    let purchase_arr = response.data.data;
-                    this.purchases.unshift(purchase_arr);
-                    this.message = 'Purchase Added';
-                    this.purchase.title = '';
-                    this.purchase.cost = '';
-                    this.purchase.amount = 1;
+                    this.newPurchaseToArr(response.data.data);
+                    this.message              = 'Purchase Added';
+                    this.purchase.title       = '';
+                    this.purchase.cost        = '';
+                    this.purchase.amount      = 1;
                     this.purchase.category_id = null;
-                    this.purchase.icon = '';
+                    this.purchase.icon        = '';
 
                     $('.btn-outline-info').removeClass('active');
                     setTimeout(() => this.message = null, 3000);
 
                 }).catch( error => {
+                    console.log(error);
                     this.error = 'Something went wrong, please try again later';
                     setTimeout(() => this.error = null, 3000);
                 }).then(_ => this.saving = false);
@@ -103,7 +103,6 @@
         }
     }
 </script>
-
 <style scoped>
     .btn.btn-outline-primary {
         width: 100%;
