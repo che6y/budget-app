@@ -6,7 +6,7 @@
 
         <progress-bar :summary="summary"></progress-bar>
 
-        <pie-chart></pie-chart>
+<!--        <pie-chart></pie-chart>-->
 
         <purchases-form :categories="categories" :change-summary="changeSummary" :new-purchase-to-arr="newPurchaseToArr">
         </purchases-form>
@@ -43,7 +43,8 @@
                                 {{ formatDate(purchase.created_at) }}
                             </div>
                             <div class="col-sm-1 col-4 text-right">
-                                <button class="btn btn-outline-info btn-sm" @click.prevent="onBtnClick( $event, index )">
+                                <button class="btn btn-outline-info btn-sm" @click.prevent="onBtnClick( $event, index, purchase
+                                 )">
                                     <i class="fas fa-ellipsis-v"></i>
                                 </button>
                             </div>
@@ -168,7 +169,7 @@
                     cost: purchase.cost,
                     amount: purchase.amount,
                     category_id: purchase.category_id,
-                    // created_at: purchase.created_at
+                    created_at: purchase.created_at
                 }).then((response) => {
                     this.message = 'Purchase updated';
                     setTimeout(() => this.message = null, 3000);
@@ -204,7 +205,7 @@
                         setTimeout(() => this.error = null, 3000);
                     }).then(_ => this.saving = false);
             },
-            onBtnClick( event, index ) {
+            onBtnClick( event, index, purchase ) {
                 const parent = $(event.target).closest('#purchase-'+index);
 
                 if ( parent.find('.purchase-edit').css('display') === 'none' ){
@@ -212,7 +213,10 @@
                         dateFormat: "yy-mm-dd",
                         changeMonth: true,
                         minDate: '-1y',
-                        maxDate: '+1m'
+                        maxDate: '+1m',
+                        onSelect:function(selectedDate, datePicker) {
+                            purchase.created_at = selectedDate;
+                        }
                     });
 
                     parent.find('.purchase-edit').show();

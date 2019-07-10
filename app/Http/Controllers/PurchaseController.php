@@ -19,7 +19,7 @@ class PurchaseController extends Controller
     public function index()
     {
         $purchases = Purchase::orderBy('created_at', 'desc')
-            ->take(20)
+            ->take(50)
             ->get();
 
         return new PurchaseCollection($purchases);
@@ -73,7 +73,8 @@ class PurchaseController extends Controller
             'title'       => 'required|min:3|max:255',
             'amount'      => 'numeric',
             'cost'        => 'required|numeric',
-            'category_id' => 'required|numeric'
+            'category_id' => 'required|numeric',
+            'created_at'  => 'required|date'
         ]);
 
         $purchase->update($data);

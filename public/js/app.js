@@ -2591,6 +2591,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 
@@ -2660,8 +2661,8 @@ __webpack_require__.r(__webpack_exports__);
         title: purchase.title,
         cost: purchase.cost,
         amount: purchase.amount,
-        category_id: purchase.category_id // created_at: purchase.created_at
-
+        category_id: purchase.category_id,
+        created_at: purchase.created_at
       }).then(function (response) {
         _this3.message = 'Purchase updated';
         setTimeout(function () {
@@ -2705,7 +2706,7 @@ __webpack_require__.r(__webpack_exports__);
         return _this4.saving = false;
       });
     },
-    onBtnClick: function onBtnClick(event, index) {
+    onBtnClick: function onBtnClick(event, index, purchase) {
       var parent = $(event.target).closest('#purchase-' + index);
 
       if (parent.find('.purchase-edit').css('display') === 'none') {
@@ -2713,7 +2714,10 @@ __webpack_require__.r(__webpack_exports__);
           dateFormat: "yy-mm-dd",
           changeMonth: true,
           minDate: '-1y',
-          maxDate: '+1m'
+          maxDate: '+1m',
+          onSelect: function onSelect(selectedDate, datePicker) {
+            purchase.created_at = selectedDate;
+          }
         });
         parent.find('.purchase-edit').show();
         parent.siblings().find('.purchase-edit').hide();
@@ -88335,6 +88339,32 @@ var render = function() {
           ]),
           _vm._v(" "),
           _c("div", { staticClass: "form-group col-md-3" }, [
+            _c("label", { attrs: { for: "purchase_date" } }, [_vm._v("Date")]),
+            _vm._v(" "),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.purchase.created_at,
+                  expression: "purchase.created_at"
+                }
+              ],
+              staticClass: "form-control mx-sm-6",
+              attrs: { id: "purchase_date", type: "text" },
+              domProps: { value: _vm.purchase.created_at },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.$set(_vm.purchase, "created_at", $event.target.value)
+                }
+              }
+            })
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "form-group col-md-3" }, [
             _c(
               "button",
               {
@@ -88578,8 +88608,6 @@ var render = function() {
       _vm._v(" "),
       _c("progress-bar", { attrs: { summary: _vm.summary } }),
       _vm._v(" "),
-      _c("pie-chart"),
-      _vm._v(" "),
       _c("purchases-form", {
         attrs: {
           categories: _vm.categories,
@@ -88645,7 +88673,7 @@ var render = function() {
                           on: {
                             click: function($event) {
                               $event.preventDefault()
-                              return _vm.onBtnClick($event, index)
+                              return _vm.onBtnClick($event, index, purchase)
                             }
                           }
                         },

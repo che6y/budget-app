@@ -13,6 +13,7 @@ class Purchase extends Model
         'cost',
         'user_id',
         'category_id',
+        'created_at'
     ];
 
     /**

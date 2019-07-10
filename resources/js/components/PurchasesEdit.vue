@@ -23,11 +23,11 @@
                                 :value="category.id" >{{category.title }}</option>
                     </select>
                 </div>
-                <!--                                <div class="form-group col-md-3">-->
-                <!--                                    <label for="purchase_date">Date</label>-->
-                <!--                                    <input class="form-control mx-sm-6" id="purchase_date" type="text"-->
-                <!--                                           v-model="purchase.created_at" />-->
-                <!--                                </div>-->
+                <div class="form-group col-md-3">
+                    <label for="purchase_date">Date</label>
+                    <input class="form-control mx-sm-6" id="purchase_date" type="text"
+                           v-model="purchase.created_at" />
+                </div>
                 <div class="form-group col-md-3">
                     <button class="btn btn-outline-primary" type="submit" :disabled="saving">Update</button>
                     <button class="btn btn-outline-danger" :disabled="saving"
