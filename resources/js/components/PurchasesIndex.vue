@@ -13,7 +13,7 @@
 
         <div class="row">
             <div class="col-sm-6">Today's total: {{ todaysTotal }}</div>
-<!--            <div class="col-sm-6">Weeks's total: {{ weeksTotal }}</div>-->
+            <div class="col-sm-6">Last month total: {{ lastTotal }}</div>
         </div>
 <!--        TODO: IMPROVEMENT: Add ability to choose day/week/month/year -->
 <!--        <nav>-->
@@ -101,7 +101,7 @@
     import * as moment from 'moment';
 
     export default {
-        props: [ 'total', 'weeksTotal' ],
+        props: [ 'total', 'lastTotal' ],
         data() {
             return {
                 message: null,

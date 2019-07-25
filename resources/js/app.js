@@ -20,6 +20,7 @@ const CategoriesIndex = require('./components/CategoriesIndex').default;
 const CategoriesList  = require('./components/CategoriesList').default;
 const PieChart        = require('./components/PieChart').default;
 const ProgressBar     = require('./components/ProgressBar').default;
+const SettingsList    = require('./components/SettingsList').default;
 
 
 Vue.component( 'pie-chart', PieChart );
@@ -42,6 +43,11 @@ const router = new VueRouter({
             name: 'categories.index',
             component: CategoriesIndex
         },
+        // {
+        //     path: '/settings',
+        //     name: 'settings.index',
+        //     component: SettingsList
+        // },
     ]
 });
 

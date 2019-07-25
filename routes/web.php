@@ -13,5 +13,8 @@
 use Illuminate\Support\Facades\Route;
 
 Auth::routes();
+//Route::get('/account/settings', 'UserController@index');
+//Route::put('/account/settings', 'UserController@update');
+//Route::put('/account/token', 'ApiTokenController@update');
 
 Route::get('/{any}', 'AppController@index')->where('any', '.*');
