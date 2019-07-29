@@ -50,6 +50,34 @@ class PurchaseController extends Controller
     }
 
     /**
+     * Display a listing of the purchases.
+     *
+     */
+    public function find( Request $request )
+    {
+        $where_params = array();
+        $data = $request->validate([
+            'title'       => 'max:255',
+            'date_from'   => 'required|max:10',
+            'date_to'     => 'required|max:10',
+            'category_id' => 'numeric',
+        ]);
+
+        if ( !empty($data['category_id']) )
+            $where_params[] = ['category_id', '=', $data['category_id']];
+        if ( !empty($data['title']) )
+            $where_params[] = ['title', '=', $data['title']];
+
+        $purchases = Purchase::where($where_params)
+            ->whereBetween('created_at', [$data['date_from'], $data['date_to']])
+            ->take(50)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return new PurchaseCollection($purchases);
+    }
+
+    /**
      * Display the specified purchase.
      *
      * @param  Purchase $purchase
@@ -80,7 +108,6 @@ class PurchaseController extends Controller
         $purchase->update($data);
 
         return new PurchaseResource($purchase);
-
     }
 
     /**

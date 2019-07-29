@@ -101,23 +101,22 @@
     import * as moment from 'moment';
 
     export default {
-        props: [ 'total', 'lastTotal' ],
+        props: [ 'total', 'lastTotal', 'categories' ],
         data() {
             return {
-                message: null,
-                error: null,
-                loading: false,
-                saving: false,
-                purchases: null,
-                categories: null,
-                summary: this.total,
+                message    : null,
+                error      : null,
+                saving     : false,
+                purchases  : null,
+                categories : null,
+                summary    : this.total,
                 todaysTotal: 0,
             };
         },
 
         created() {
             this.fetchPurchaseData();
-            this.fetchCategoryData();
+            // this.fetchCategoryData();
         },
         watch: {
             purchases: function (val) {
@@ -130,29 +129,29 @@
             }
         },
         methods: {
-            fetchCategoryData() {
-                this.error = this.categories = null;
-                this.loading = true;
-                axios
-                    .get( '/api/categories' )
-                    .then( response => {
-                        this.loading = false;
-                        this.categories = response.data.data;
-                    }).catch( error => {
-                    this.loading = false;
-                    this.error = error.response.data.message || error.message;
-                });
-            },
+            // fetchCategoryData() {
+            //     this.error  = this.categories = null;
+            //     this.saving = true;
+            //     axios
+            //         .get( '/api/categories' )
+            //         .then( response => {
+            //             this.saving = false;
+            //             this.categories = response.data.data;
+            //         }).catch( error => {
+            //         this.saving = false;
+            //         this.error = error.response.data.message || error.message;
+            //     });
+            // },
             fetchPurchaseData() {
                 this.error = this.purchases = null;
-                this.loading = true;
+                this.saving = true;
                 axios
                     .get('/api/purchases')
                     .then(response => {
                         this.purchases = response.data.data;
-                        this.loading = false;
+                        this.saving = false;
                     }).catch(error => {
-                        this.loading = false;
+                        this.saving = false;
                         this.error = error.response.data.message || error.message;
                     });
             },
@@ -248,15 +247,6 @@
 </script>
 
 <style scoped>
-    .progress {
-        position: relative;
-        height: 30px;
-        margin: 0 0 20px 0;
-    }
-    .progress .progress-bar {
-        font-size: 14px;
-        text-shadow: 0px 0px 1px #ffffff;
-    }
     .fa {
         padding-right: 10px;
     }

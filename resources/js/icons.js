@@ -28,6 +28,6 @@ const icons = [
     'shopping-cart',
     'video',
     'phone',
-    'tv'
+    'bookmark'
 ];
 export default icons;

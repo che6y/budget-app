@@ -2,8 +2,8 @@ export default {
     all() {
         return axios.get('/api/purchases');
     },
-    find(id) {
-        return axios.get(`/api/purchases/${id}`);
+    find(data) {
+        return axios.post(`/api/purchases/find`,  data);
     },
     post(data) {
         return axios.post(`/api/purchases/`, data);

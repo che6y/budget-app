@@ -38,7 +38,6 @@
     </div>
 </template>
 <script>
-    import api from '../api/purchases';
     import $ from 'jquery';
     import datepickerFactory from 'jquery-datepicker';
 
