@@ -1862,6 +1862,7 @@ module.exports = function isBuffer (obj) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _api_categories__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../api/categories */ "./resources/js/api/categories.js");
 //
 //
 //
@@ -1870,6 +1871,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "App",
@@ -1897,6 +1900,21 @@ __webpack_require__.r(__webpack_exports__);
         _this.loading = false;
         _this.error = error.response.data.message || error.message;
       });
+    },
+    addCategory: function addCategory(title, icon) {
+      var _this2 = this;
+
+      var result = false;
+      _api_categories__WEBPACK_IMPORTED_MODULE_1__["default"].post({
+        title: title,
+        icon: icon
+      }).then(function (response) {
+        _this2.categories.unshift(response.data.data);
+
+        result = true;
+      })["catch"](function (error) {
+        result = error;
+      });
     }
   }
 });
@@ -1907,150 +1925,6 @@ __webpack_require__.r(__webpack_exports__);
 /*!**************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CategoriesIndex.vue?vue&type=script&lang=js& ***!
   \**************************************************************************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _api_categories__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../api/categories */ "./resources/js/api/categories.js");
-/* harmony import */ var _icons__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../icons */ "./resources/js/icons.js");
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-  data: function data() {
-    return {
-      message: null,
-      error: null,
-      categories: null,
-      icons: _icons__WEBPACK_IMPORTED_MODULE_2__["default"]
-    };
-  },
-  created: function created() {
-    this.fetchCategoryData();
-  },
-  methods: {
-    fetchCategoryData: function fetchCategoryData() {
-      var _this = this;
-
-      this.error = this.categories = null;
-      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/categories').then(function (response) {
-        _this.loading = false;
-        _this.categories = response.data.data;
-      })["catch"](function (error) {
-        _this.error = error.response.data.message || error.message;
-      });
-    },
-    onCategorySubmit: function onCategorySubmit(event, category) {
-      var _this2 = this;
-
-      console.log(_typeof(category.icon));
-      _api_categories__WEBPACK_IMPORTED_MODULE_1__["default"].update(category.id, {
-        id: category.id,
-        title: category.title,
-        icon: category.icon
-      }).then(function (response) {
-        _this2.message = 'Category Updated';
-        setTimeout(function () {
-          return _this2.message = null;
-        }, 3000);
-      })["catch"](function (error) {
-        _this2.error = 'Something went wrong, please try again later';
-        setTimeout(function () {
-          return _this2.error = null;
-        }, 3000);
-      });
-    },
-    onDelete: function onDelete(event, id) {
-      var _this3 = this;
-
-      _api_categories__WEBPACK_IMPORTED_MODULE_1__["default"]["delete"](id).then(function (response) {
-        if (response.data.deleted) {
-          $(event.target).closest('.list-group-item').hide();
-        }
-
-        _this3.message = response.data.text;
-        setTimeout(function () {
-          return _this3.message = null;
-        }, 3000);
-      });
-    },
-    onBtnClick: function onBtnClick(event, index) {
-      var parent = $(event.target).closest('#category-' + index);
-
-      if (parent.find('.category-edit').css('display') === 'none') {
-        parent.find('.category-edit').show();
-        parent.siblings().find('.category-edit').hide();
-      } else {
-        parent.find('.category-edit').hide();
-      }
-    },
-    changeCategoryIcon: function changeCategoryIcon(event, icon, category) {
-      category.icon = icon;
-    }
-  }
-});
-
-/***/ }),
-
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CategoriesList.vue?vue&type=script&lang=js&":
-/*!*************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CategoriesList.vue?vue&type=script&lang=js& ***!
-  \*************************************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2108,19 +1982,141 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['onCategoryIconClick', 'categories'],
+  props: ['categories'],
   data: function data() {
     return {
       message: null,
       error: null,
-      icons: _icons__WEBPACK_IMPORTED_MODULE_1__["default"],
+      icons: _icons__WEBPACK_IMPORTED_MODULE_1__["default"]
+    };
+  },
+  methods: {
+    onCategorySubmit: function onCategorySubmit(event, category) {
+      var _this = this;
+
+      _api_categories__WEBPACK_IMPORTED_MODULE_0__["default"].update(category.id, {
+        id: category.id,
+        title: category.title,
+        icon: category.icon
+      }).then(function (response) {
+        _this.message = 'Category Updated';
+        setTimeout(function () {
+          return _this.message = null;
+        }, 3000);
+      })["catch"](function (error) {
+        _this.error = 'Something went wrong, please try again later';
+        setTimeout(function () {
+          return _this.error = null;
+        }, 3000);
+      });
+    },
+    onDelete: function onDelete(event, id) {
+      var _this2 = this;
+
+      _api_categories__WEBPACK_IMPORTED_MODULE_0__["default"]["delete"](id).then(function (response) {
+        if (response.data.deleted) {
+          $(event.target).closest('.list-group-item').hide();
+        }
+
+        _this2.message = response.data.text;
+        setTimeout(function () {
+          return _this2.message = null;
+        }, 3000);
+      });
+    },
+    onBtnClick: function onBtnClick(event, index) {
+      var parent = $(event.target).closest('#category-' + index);
+
+      if (parent.find('.category-edit').css('display') === 'none') {
+        parent.find('.category-edit').show();
+        parent.siblings().find('.category-edit').hide();
+      } else {
+        parent.find('.category-edit').hide();
+      }
+    },
+    changeCategoryIcon: function changeCategoryIcon(event, icon, category) {
+      category.icon = icon;
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CategoriesList.vue?vue&type=script&lang=js&":
+/*!*************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CategoriesList.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _icons__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../icons */ "./resources/js/icons.js");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['onCategoryIconClick', 'categories', 'addCategory'],
+  data: function data() {
+    return {
+      message: null,
+      error: null,
+      icons: _icons__WEBPACK_IMPORTED_MODULE_0__["default"],
       category: {
         id: null,
         title: "",
@@ -2132,26 +2128,14 @@ __webpack_require__.r(__webpack_exports__);
     onCategorySubmit: function onCategorySubmit(event) {
       var _this = this;
 
-      _api_categories__WEBPACK_IMPORTED_MODULE_0__["default"].post({
-        title: this.category.title,
-        icon: this.category.icon
-      }).then(function (response) {
-        $('#add-category-form').modal('hide');
-        _this.message = 'Category Added';
-        setTimeout(function () {
-          return _this.message = null;
-        }, 3000);
-
-        _this.categories.unshift(response.data.data);
-
-        _this.category.title = '';
-        _this.category.icon = null;
-      })["catch"](function (error) {
-        _this.error = 'Something went wrong, please try again later';
-        setTimeout(function () {
-          return _this.error = null;
-        }, 3000);
-      });
+      this.addCategory(this.category.title, this.category.icon);
+      $('#add-category-form').modal('hide');
+      this.message = 'Category Added';
+      setTimeout(function () {
+        return _this.message = null;
+      }, 3000);
+      this.category.title = '';
+      this.category.icon = null;
     },
     changeCategoryIcon: function changeCategoryIcon(event, icon) {
       this.category.icon = icon;
@@ -2454,10 +2438,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "PurchasesForm",
-  props: ['categories', 'changeSummary', 'newPurchaseToArr'],
+  props: ['categories', 'changeSummary', 'newPurchaseToArr', 'addCategory'],
   data: function data() {
     return {
       error: null,
@@ -2648,24 +2633,28 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['total', 'lastTotal', 'categories'],
+  props: ['total', 'lastTotal', 'categories', 'addCategory'],
   data: function data() {
     return {
       message: null,
       error: null,
       saving: false,
       purchases: null,
-      categories: null,
       summary: this.total,
       todaysTotal: 0
     };
   },
   created: function created() {
-    this.fetchPurchaseData(); // this.fetchCategoryData();
+    this.fetchPurchaseData();
   },
   watch: {
     purchases: function purchases(val) {
@@ -2678,19 +2667,6 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   methods: {
-    // fetchCategoryData() {
-    //     this.error  = this.categories = null;
-    //     this.saving = true;
-    //     axios
-    //         .get( '/api/categories' )
-    //         .then( response => {
-    //             this.saving = false;
-    //             this.categories = response.data.data;
-    //         }).catch( error => {
-    //         this.saving = false;
-    //         this.error = error.response.data.message || error.message;
-    //     });
-    // },
     fetchPurchaseData: function fetchPurchaseData() {
       var _this = this;
 
@@ -2866,6 +2842,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2881,7 +2859,8 @@ __webpack_require__.r(__webpack_exports__);
         date_to: null,
         category_id: 0
       },
-      purchases: null
+      purchases: null,
+      totalCost: null
     };
   },
   mounted: function mounted() {
@@ -2916,7 +2895,12 @@ __webpack_require__.r(__webpack_exports__);
         date_from: this.purchase.date_from,
         date_to: this.purchase.date_to
       }).then(function (response) {
-        _this2.purchases = response.data.data;
+        if (response.data.purchases.data === 0) _this2.message = 'There is no purchases from this period of time :(';
+        setTimeout(function () {
+          return _this2.message = null;
+        }, 3000);
+        _this2.purchases = response.data.purchases.data;
+        _this2.totalCost = response.data.totalCost;
       })["catch"](function (error) {
         _this2.error = 'Something went wrong, please try again later';
         setTimeout(function () {
@@ -87782,7 +87766,8 @@ var render = function() {
           attrs: {
             total: _vm.total,
             "last-total": _vm.lastTotal,
-            categories: _vm.categories
+            categories: _vm.categories,
+            "add-category": _vm.addCategory
           }
         })
       ],
@@ -88738,6 +88723,7 @@ var render = function() {
       _vm._v(" "),
       _c("categories-list", {
         attrs: {
+          "add-category": _vm.addCategory,
           "on-category-icon-click": _vm.onCategoryIconClick,
           categories: _vm.categories
         }
@@ -88807,7 +88793,8 @@ var render = function() {
         attrs: {
           categories: _vm.categories,
           "change-summary": _vm.changeSummary,
-          "new-purchase-to-arr": _vm.newPurchaseToArr
+          "new-purchase-to-arr": _vm.newPurchaseToArr,
+          "add-category": _vm.addCategory
         }
       }),
       _vm._v(" "),
@@ -89276,7 +89263,11 @@ var render = function() {
               }
             ],
             staticClass: "form-control mx-sm-6",
-            attrs: { id: "purchase_date_from", type: "text" },
+            attrs: {
+              id: "purchase_date_from",
+              type: "text",
+              autocomplete: "off"
+            },
             domProps: { value: _vm.purchase.date_from },
             on: {
               input: function($event) {
@@ -89304,7 +89295,11 @@ var render = function() {
               }
             ],
             staticClass: "form-control mx-sm-6",
-            attrs: { id: "purchase_date_to", type: "text" },
+            attrs: {
+              id: "purchase_date_to",
+              type: "text",
+              autocomplete: "off"
+            },
             domProps: { value: _vm.purchase.date_to },
             on: {
               input: function($event) {
@@ -89320,6 +89315,14 @@ var render = function() {
         _vm._m(0)
       ]
     ),
+    _vm._v(" "),
+    _vm.totalCost
+      ? _c(
+          "div",
+          { staticClass: "alert alert-primary", attrs: { role: "alert" } },
+          [_vm._v("Total: " + _vm._s(_vm.totalCost))]
+        )
+      : _vm._e(),
     _vm._v(" "),
     _vm.purchases
       ? _c(

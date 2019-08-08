@@ -20,17 +20,19 @@
             <div class="form-group col-md-2">
                 <label for="purchase_date_from">Date From</label>
                 <input class="form-control mx-sm-6" id="purchase_date_from" type="text"
-                       v-model="purchase.date_from" />
+                       v-model="purchase.date_from" autocomplete="off" />
             </div>
             <div class="form-group col-md-2">
                 <label for="purchase_date_to">Date To</label>
                 <input class="form-control mx-sm-6" id="purchase_date_to" type="text"
-                       v-model="purchase.date_to" />
+                       v-model="purchase.date_to" autocomplete="off"/>
             </div>
             <div class="form-group col-md-2">
                 <button class="btn btn-outline-primary" type="submit">Find</button>
             </div>
         </form>
+
+        <div v-if="totalCost" class="alert alert-primary" role="alert">Total: {{ totalCost }}</div>
 
         <ul v-if="purchases" class="list-group">
             <li v-for="(purchase, index) in purchases" :id="['purchase-' + index]"
@@ -71,6 +73,7 @@
                     category_id : 0,
                 },
                 purchases: null,
+                totalCost: null
             }
         },
         mounted() {
@@ -102,7 +105,11 @@
                     date_from   : this.purchase.date_from,
                     date_to     : this.purchase.date_to
                 }).then( (response) => {
-                    this.purchases = response.data.data;
+                    if ( response.data.purchases.data === 0 )
+                        this.message = 'There is no purchases from this period of time :(';
+                    setTimeout(() => this.message = null, 3000);
+                    this.purchases = response.data.purchases.data;
+                    this.totalCost = response.data.totalCost;
                 }).catch( error => {
                     this.error = 'Something went wrong, please try again later';
                     setTimeout(() => this.error = null, 3000);

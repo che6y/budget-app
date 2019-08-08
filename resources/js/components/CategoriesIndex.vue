@@ -49,36 +49,20 @@
 </template>
 
 <script>
-    import axios from 'axios';
     import categories_api from '../api/categories';
     import icons from '../icons';
 
     export default {
+        props: ['categories'],
         data(){
             return {
                 message: null,
                 error: null,
-                categories: null,
                 icons: icons,
             }
         },
-        created() {
-            this.fetchCategoryData();
-        },
         methods: {
-            fetchCategoryData() {
-                this.error = this.categories = null;
-                axios
-                    .get( '/api/categories' )
-                    .then( response => {
-                        this.loading = false;
-                        this.categories = response.data.data;
-                    }).catch( error => {
-                    this.error = error.response.data.message || error.message;
-                });
-            },
             onCategorySubmit( event, category ) {
-                console.log(typeof category.icon);
                 categories_api.update( category.id, {
                     id: category.id,
                     title: category.title,

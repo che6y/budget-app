@@ -1,17 +1,19 @@
 <template>
     <div>
         <div class="container">
-            <router-view :total="total" :last-total="lastTotal" :categories="categories"></router-view>
+            <router-view :total="total" :last-total="lastTotal" :categories="categories"
+                         :add-category="addCategory"></router-view>
         </div>
     </div>
 </template>
 
 <script>
     import axios from 'axios';
+    import category_api from '../api/categories';
 
     export default {
         name: "App",
-        props: [ 'total', 'lastTotal' ],
+        props: [ 'total', 'lastTotal'],
         data() {
             return {
                 message: null,
@@ -35,6 +37,18 @@
                     this.loading = false;
                     this.error = error.response.data.message || error.message;
                 } );
+            },
+            addCategory( title, icon ) {
+                var result = false;
+                category_api.post( {
+                    title: title,
+                    icon: icon,
+                }).then( (response) => {
+                    this.categories.unshift(response.data.data);
+                    result = true;
+                }).catch( error => {
+                    result = error;
+                });
             },
         },
     }

@@ -8,6 +8,7 @@ use App\Purchase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class PurchaseController extends Controller
@@ -68,13 +69,22 @@ class PurchaseController extends Controller
         if ( !empty($data['title']) )
             $where_params[] = ['title', '=', $data['title']];
 
-        $purchases = Purchase::where($where_params)
+        $totalCost = Purchase::where( $where_params )
             ->whereBetween('created_at', [$data['date_from'], $data['date_to']])
-            ->take(50)
+            ->sum(DB::raw('cost * amount'));
+
+        $purchases = Purchase::where( $where_params )
+            ->whereBetween('created_at', [$data['date_from'], $data['date_to']])
+            ->take(200)
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return new PurchaseCollection($purchases);
+        $returnData = array(
+            'purchases' => new PurchaseCollection( $purchases ),
+            'totalCost' => $totalCost
+        );
+
+        return $returnData;
     }
 
     /**

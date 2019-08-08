@@ -53,11 +53,10 @@
 </template>
 
 <script>
-    import categories_api from '../api/categories';
     import icons from '../icons';
 
     export default {
-        props: ['onCategoryIconClick', 'categories'],
+        props: ['onCategoryIconClick', 'categories', 'addCategory'],
         data(){
             return {
                 message: null,
@@ -71,22 +70,13 @@
             }
         },
         methods: {
-
             onCategorySubmit( event ) {
-                categories_api.post( {
-                    title: this.category.title,
-                    icon: this.category.icon,
-                }).then( (response) => {
-                    $('#add-category-form').modal('hide');
-                    this.message = 'Category Added';
-                    setTimeout(() => this.message = null, 3000);
-                    this.categories.unshift(response.data.data);
-                    this.category.title = '';
-                    this.category.icon  = null;
-                }).catch( error => {
-                    this.error = 'Something went wrong, please try again later';
-                    setTimeout(() => this.error = null, 3000);
-                });
+                this.addCategory( this.category.title, this.category.icon );
+                $('#add-category-form').modal('hide');
+                this.message = 'Category Added';
+                setTimeout(() => this.message = null, 3000);
+                this.category.title = '';
+                this.category.icon  = null;
             },
             changeCategoryIcon ( event, icon ) {
                 this.category.icon = icon;

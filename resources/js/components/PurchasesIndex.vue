@@ -8,7 +8,12 @@
 
 <!--        <pie-chart></pie-chart>-->
 
-        <purchases-form :categories="categories" :change-summary="changeSummary" :new-purchase-to-arr="newPurchaseToArr">
+        <purchases-form
+                :categories="categories"
+                :change-summary="changeSummary"
+                :new-purchase-to-arr="newPurchaseToArr"
+                :add-category="addCategory"
+        >
         </purchases-form>
 
         <div class="row">
@@ -101,14 +106,13 @@
     import * as moment from 'moment';
 
     export default {
-        props: [ 'total', 'lastTotal', 'categories' ],
+        props: [ 'total', 'lastTotal', 'categories', 'addCategory' ],
         data() {
             return {
                 message    : null,
                 error      : null,
                 saving     : false,
                 purchases  : null,
-                categories : null,
                 summary    : this.total,
                 todaysTotal: 0,
             };
@@ -116,7 +120,6 @@
 
         created() {
             this.fetchPurchaseData();
-            // this.fetchCategoryData();
         },
         watch: {
             purchases: function (val) {
@@ -129,19 +132,6 @@
             }
         },
         methods: {
-            // fetchCategoryData() {
-            //     this.error  = this.categories = null;
-            //     this.saving = true;
-            //     axios
-            //         .get( '/api/categories' )
-            //         .then( response => {
-            //             this.saving = false;
-            //             this.categories = response.data.data;
-            //         }).catch( error => {
-            //         this.saving = false;
-            //         this.error = error.response.data.message || error.message;
-            //     });
-            // },
             fetchPurchaseData() {
                 this.error = this.purchases = null;
                 this.saving = true;

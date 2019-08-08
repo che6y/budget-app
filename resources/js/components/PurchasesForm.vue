@@ -24,7 +24,8 @@
             </div>
         </form>
 
-        <categories-list :on-category-icon-click="onCategoryIconClick" :categories="categories"></categories-list>
+        <categories-list :add-category="addCategory" :on-category-icon-click="onCategoryIconClick"
+                         :categories="categories"></categories-list>
     </div>
 </template>
 
@@ -33,7 +34,7 @@
 
     export default {
         name: "PurchasesForm",
-        props: ['categories', 'changeSummary', 'newPurchaseToArr'],
+        props: ['categories', 'changeSummary', 'newPurchaseToArr', 'addCategory'],
         data() {
             return {
                 error   : null,
