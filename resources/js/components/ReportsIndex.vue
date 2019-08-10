@@ -1,6 +1,8 @@
 <template>
     <div class="reports">
 
+        <pie-chart></pie-chart>
+
         <div v-if="message" class="alert alert-success" role="alert">{{ message }}</div>
         <div v-if="error" class="alert alert-danger" role="alert">{{ error }}</div>
 

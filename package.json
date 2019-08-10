@@ -15,7 +15,7 @@
         "cross-env": "^5.1",
         "jquery": "^3.4.1",
         "laravel-mix": "^4.0.7",
-        "lodash": "^4.17.5",
+        "lodash": "^4.17.15",
         "popper.js": "^1.12",
         "resolve-url-loader": "^2.3.1",
         "sass": "^1.20.1",
@@ -24,7 +24,7 @@
         "vue-template-compiler": "^2.6.10"
     },
     "dependencies": {
-        "d3": "^5.9.7",
+        "chart.js": "^2.8.0",
         "jquery-datepicker": "^1.12.3",
         "moment": "^2.24.0",
         "vue-router": "^3.0.6"

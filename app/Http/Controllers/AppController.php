@@ -46,12 +46,26 @@ class AppController extends Controller
 
     public function getData()
     {
+        $today = new \DateTime('+1 day');
+        $date_from = date(
+            'Y-m-d',
+            mktime(
+                0,
+                0,
+                0,
+                date('j') < 25 ? date('m') - 1 : date('m'),
+                25,
+                date('Y')
+            )
+        );
         $data = DB::table('purchases')
+            ->whereBetween('purchases.created_at', [$date_from, $today->format('Y-m-d')])
             ->select(DB::raw('categories.title, SUM(purchases.amount * purchases.cost) as cost'))
             ->leftJoin('categories', 'purchases.category_id', '=', 'categories.id')
             ->groupBy('purchases.category_id')
             ->orderBy('cost', 'desc')
             ->get();
+
         return json_encode($data);
     }
 }
