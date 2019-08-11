@@ -1,7 +1,7 @@
 <template>
     <div class="reports">
 
-        <pie-chart></pie-chart>
+        <canvas id="pie-chart" width="300" height="300">Your browser does not support the canvas element.</canvas>
 
         <div v-if="message" class="alert alert-success" role="alert">{{ message }}</div>
         <div v-if="error" class="alert alert-danger" role="alert">{{ error }}</div>
@@ -16,6 +16,7 @@
             <div class="form-group col-md-3">
                 <label for="category-id">Category</label>
                 <select v-if="categories" id="category-id" v-model="purchase.category_id" class="form-control">
+                    <option value="0" >All</option>
                     <option v-for="category in categories" :value="category.id" >{{category.title }}</option>
                 </select>
             </div>
@@ -33,8 +34,6 @@
                 <button class="btn btn-outline-primary" type="submit">Find</button>
             </div>
         </form>
-
-        <div v-if="totalCost" class="alert alert-primary" role="alert">Total: {{ totalCost }}</div>
 
         <ul v-if="purchases" class="list-group">
             <li v-for="(purchase, index) in purchases" :id="['purchase-' + index]"
@@ -58,8 +57,9 @@
 </template>
 
 <script>
-    import purchases_api from '../api/purchases';
+    import reports_api from '../api/reports';
     import * as moment from 'moment';
+    import Chart from 'chart.js';
 
     export default {
         name: "ReportsIndex",
@@ -71,11 +71,13 @@
                 purchase: {
                     title       : null,
                     date_from   : null,
-                    date_to     : null,
+                    date_to     : moment( new Date() ).add(1, 'd').format( 'YYYY-MM-DD' ),
                     category_id : 0,
                 },
                 purchases: null,
-                totalCost: null
+                totalCost: null,
+                pieData  : null,
+                PieChart : null
             }
         },
         mounted() {
@@ -99,9 +101,53 @@
                 }
             });
         },
+        created() {
+            this.fetchReportsData();
+        },
         methods: {
+            fetchReportsData() {
+                axios
+                    .get( '/api/reports' )
+                    .then( response => {
+                        this.pieData            = response.data.pieData;
+                        this.purchase.date_from = response.data.dateFrom;
+                        this.totalCost          = response.data.totalCost;
+                        this.createPieChart();
+                    }).catch( error => {
+                    this.error = error.response.data.message || error.message;
+                });
+            },
+            createPieChart(){
+                var ctx     = document.getElementById('pie-chart');
+                var labels  = Object.keys(this.pieData);
+                var data    = Object.values(this.pieData);
+                this.PieChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        datasets: [{
+                            data: data,
+                            backgroundColor:
+                                ['#aec7e8','#ffbb78','#98df8a','#ff9896','#c5b0d5','#c49c94','#f7b6d2','#c7c7c7','#dbdb8d','#9edae5']
+                        }],
+
+                        labels: labels
+                    },
+                    options: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        title: {
+                            display : true,
+                            position: 'bottom',
+                            text    : 'Total: ' + this.totalCost,
+                            fontSize: 16,
+                        }
+                    },
+
+                });
+            },
             onSubmit() {
-                purchases_api.find({
+                reports_api.find({
                     title       : this.purchase.title,
                     category_id : this.purchase.category_id,
                     date_from   : this.purchase.date_from,
@@ -112,7 +158,13 @@
                     setTimeout(() => this.message = null, 3000);
                     this.purchases = response.data.purchases.data;
                     this.totalCost = response.data.totalCost;
+                    this.pieData   = response.data.pieData;
+                    this.PieChart.data.datasets[0].data = Object.values(this.pieData);
+                    this.PieChart.data.labels           = Object.keys(this.pieData);
+                    this.PieChart.options.title.text    = 'Total: ' + this.totalCost;
+                    this.PieChart.update();
                 }).catch( error => {
+                    console.log(error);
                     this.error = 'Something went wrong, please try again later';
                     setTimeout(() => this.error = null, 3000);
                 });
@@ -125,5 +177,7 @@
 </script>
 
 <style scoped>
-
+    canvas {
+        margin: 0 0 20px 0;
+    }
 </style>

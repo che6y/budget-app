@@ -19,7 +19,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 // Purchases
 Route::get('/purchases', 'PurchaseController@index');
-Route::post('/purchases/find', 'PurchaseController@find');
 Route::get('/purchases/{purchase}', 'PurchaseController@show');
 Route::put('/purchases/{purchase}', 'PurchaseController@update');
 Route::post('/purchases/', 'PurchaseController@store');
@@ -32,7 +31,10 @@ Route::put('/categories/{category}', 'CategoryController@update');
 Route::post('/categories/', 'CategoryController@store');
 Route::delete('/categories/{category}', 'CategoryController@destroy');
 
-Route::get('/pie-data', 'AppController@getData');
+// Reports
+Route::get('/reports', 'ReportController@index');
+Route::post('/reports/find', 'ReportController@find');
+
 
 Route::get('/options', 'OptionController@index');
 Route::get('/options/find', 'OptionController@find');

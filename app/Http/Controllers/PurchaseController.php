@@ -13,6 +13,11 @@ use Illuminate\Support\Facades\Log;
 
 class PurchaseController extends Controller
 {
+//    public function __construct()
+//    {
+//        $this->middleware('auth');
+//    }
+
     /**
      * Display a listing of the purchases.
      *
@@ -48,43 +53,6 @@ class PurchaseController extends Controller
         $category->update( [ 'usage' => ++$usage ] );
 
         return new PurchaseResource($purchase);
-    }
-
-    /**
-     * Display a listing of the purchases.
-     *
-     */
-    public function find( Request $request )
-    {
-        $where_params = array();
-        $data = $request->validate([
-            'title'       => 'max:255',
-            'date_from'   => 'required|max:10',
-            'date_to'     => 'required|max:10',
-            'category_id' => 'numeric',
-        ]);
-
-        if ( !empty($data['category_id']) )
-            $where_params[] = ['category_id', '=', $data['category_id']];
-        if ( !empty($data['title']) )
-            $where_params[] = ['title', '=', $data['title']];
-
-        $totalCost = Purchase::where( $where_params )
-            ->whereBetween('created_at', [$data['date_from'], $data['date_to']])
-            ->sum(DB::raw('cost * amount'));
-
-        $purchases = Purchase::where( $where_params )
-            ->whereBetween('created_at', [$data['date_from'], $data['date_to']])
-            ->take(200)
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        $returnData = array(
-            'purchases' => new PurchaseCollection( $purchases ),
-            'totalCost' => $totalCost
-        );
-
-        return $returnData;
     }
 
     /**

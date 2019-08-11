@@ -18,14 +18,11 @@ const PurchasesEdit   = require('./components/PurchasesEdit').default;
 const PurchasesForm   = require('./components/PurchasesForm').default;
 const CategoriesIndex = require('./components/CategoriesIndex').default;
 const CategoriesList  = require('./components/CategoriesList').default;
-const PieChart        = require('./components/PieChart').default;
 const ProgressBar     = require('./components/ProgressBar').default;
 const ReportsIndex    = require('./components/ReportsIndex').default;
 
 // const SettingsList    = require('./components/SettingsList').default;
 
-
-Vue.component( 'pie-chart', PieChart );
 Vue.component( 'purchases-form', PurchasesForm );
 Vue.component( 'purchase-edit', PurchasesEdit );
 Vue.component( 'categories-list', CategoriesList );
