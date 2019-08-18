@@ -23,7 +23,7 @@
                     @csrf
                     @method('PUT')
                     <div class="form-group col-md-12">
-                        <input id="name" name="api_token" type="text" class="form-control" value="{{ !empty($token) ? $token : '' }}">
+                        <input id="name" name="api_token" type="text" class="form-control" value="{{ !empty($user->api_token) ? $user->api_token : '' }}">
                     </div>
                     <div class="form-group col-md-12">
                         <button class="btn btn-outline-primary" type="submit">Generate new token</button>

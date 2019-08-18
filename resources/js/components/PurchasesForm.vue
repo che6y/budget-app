@@ -3,6 +3,9 @@
         <div v-if="message" class="alert alert-success" role="alert">{{ message }}</div>
         <div v-if="error" class="alert alert-danger" role="alert">{{ error }}</div>
 
+        <categories-list :add-category="addCategory" :on-category-icon-click="onCategoryIconClick"
+                         :categories="categories"></categories-list>
+
         <form class="form-row align-items-end" @submit.prevent="onSubmit($event)">
             <input type="hidden" name="user_id"/>
 
@@ -14,18 +17,16 @@
                 <label for="purchase_cost">Price</label>
                 <input class="form-control" id="purchase_cost" type="number" v-model="purchase.cost" required />
             </div>
-            <div class="form-group col-md-2">
-                <label for="purchase_amount">Amount</label>
-                <input class="form-control mx-sm-6" id="purchase_amount" type="number" min="1" step="1" value="1"
+<!--            <div class="form-group col-md-2">-->
+<!--                <label for="purchase_amount">Amount</label>-->
+                <input class="form-control mx-sm-6" id="purchase_amount" type="hidden" min="1" step="1" value="1"
                        v-model="purchase.amount" />
-            </div>
+<!--            </div>-->
             <div class="form-group col-md-2">
                 <button class="btn btn-outline-primary" type="submit">Add</button>
             </div>
         </form>
 
-        <categories-list :add-category="addCategory" :on-category-icon-click="onCategoryIconClick"
-                         :categories="categories"></categories-list>
     </div>
 </template>
 
@@ -107,5 +108,9 @@
 <style scoped>
     .btn.btn-outline-primary {
         width: 100%;
+    }
+    form {
+        margin: 0 0 20px 0;
+        font-size: 16px;
     }
 </style>

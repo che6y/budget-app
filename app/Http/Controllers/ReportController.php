@@ -14,6 +14,10 @@ use Illuminate\Support\Facades\Log;
 
 class ReportController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
     /**
      * Display a listing of the purchases.
      *

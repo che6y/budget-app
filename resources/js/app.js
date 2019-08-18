@@ -20,6 +20,7 @@ const CategoriesIndex = require('./components/CategoriesIndex').default;
 const CategoriesList  = require('./components/CategoriesList').default;
 const ProgressBar     = require('./components/ProgressBar').default;
 const ReportsIndex    = require('./components/ReportsIndex').default;
+const SettingsList    = require('./components/SettingsList').default;
 
 // const SettingsList    = require('./components/SettingsList').default;
 
@@ -47,11 +48,11 @@ const router = new VueRouter({
             name: 'reports.index',
             component: ReportsIndex
         },
-        // {
-        //     path: '/settings',
-        //     name: 'settings.index',
-        //     component: SettingsList
-        // },
+        {
+            path: '/settings',
+            name: 'settings.index',
+            component: SettingsList
+        },
     ]
 });
 

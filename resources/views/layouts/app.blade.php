@@ -9,6 +9,7 @@
 
     @if (Auth::check())
         <meta name="user-id" content="{{ Auth::user()->id }}">
+        <meta name="api-token" content="{{ Auth::user()->api_token }}">
     @endif
 
     <title>{{ config('app.name', 'Purchases') }}</title>
