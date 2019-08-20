@@ -22,6 +22,6 @@ class ApiTokenController extends Controller
             'api_token' => hash('sha384', $token),
         ])->save();
 
-        return view('account/settings', ['token' => $token, 'user' => Auth::user() ]);
+        return view('account/settings', ['user' => Auth::user() ]);
     }
 }

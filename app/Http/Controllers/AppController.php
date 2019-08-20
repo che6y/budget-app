@@ -12,8 +12,6 @@ class AppController extends Controller
 
     public function index()
     {
-        $user = Auth::user();
-        Log::info(print_r($user, true));
         $today = new \DateTime('+1 day');
         $date_from = date(
             'Y-m-d',
