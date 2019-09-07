@@ -18,7 +18,7 @@
 
         <div class="row">
             <div class="col-sm-6">Today's total: {{ todaysTotal }}</div>
-            <div class="col-sm-6">Last month total: {{ lastTotal }}</div>
+            <div class="col-sm-6">Last month total: 85630</div>
         </div>
 <!--        TODO: IMPROVEMENT: Add ability to choose day/week/month/year -->
 <!--        <nav>-->

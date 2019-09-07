@@ -14,14 +14,14 @@ class ApiTokenController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return array
      */
-    public function update(Request $request)
-    {
-        $token = Str::random(60);
-
-        $request->user()->forceFill([
-            'api_token' => hash('sha384', $token),
-        ])->save();
-
-        return view('account/settings', ['user' => Auth::user() ]);
-    }
+//    public function update(Request $request)
+//    {
+//        $token = Str::random(60);
+//
+//        $request->user()->forceFill([
+//            'api_token' => hash('sha256', $token),
+//        ])->save();
+//
+//        return view('account/settings', ['user' => Auth::user() ]);
+//    }
 }
