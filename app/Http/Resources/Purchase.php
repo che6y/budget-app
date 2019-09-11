@@ -25,6 +25,7 @@ class Purchase extends JsonResource
             'category_id'=> $this->category_id,
             'created_at' => $this->created_at,
             'icon'       => $this->icon,
+            'is_income'  => $this->is_income
         ];
     }
 }

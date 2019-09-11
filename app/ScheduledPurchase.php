@@ -4,13 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Purchase extends Model
+class ScheduledPurchase extends Model
 {
     protected $fillable = [
         'title',
-        'amount',
         'cost',
         'user_id',
+        'is_income',
         'category_id',
         'created_at'
     ];

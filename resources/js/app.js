@@ -21,6 +21,8 @@ const CategoriesList  = require('./components/CategoriesList').default;
 const ProgressBar     = require('./components/ProgressBar').default;
 const ReportsIndex    = require('./components/ReportsIndex').default;
 const SettingsList    = require('./components/SettingsList').default;
+const ScheduledIndex  = require('./components/ScheduledIndex').default;
+
 
 // const SettingsList    = require('./components/SettingsList').default;
 
@@ -37,6 +39,11 @@ const router = new VueRouter({
             path: '/',
             name: 'purchases.index',
             component: Purchases
+        },
+        {
+            path: '/scheduled-purchases',
+            name: 'spurchases.index',
+            component: ScheduledIndex
         },
         {
             path: '/categories',

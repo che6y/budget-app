@@ -24,6 +24,12 @@ Route::put('/purchases/{purchase}', 'PurchaseController@update');
 Route::post('/purchases/', 'PurchaseController@store');
 Route::delete('/purchases/{purchase}', 'PurchaseController@destroy');
 
+// Scheduled Purchases
+Route::get('/s-purchases', 'ScheduledPurchaseController@index');
+Route::put('/s-purchases/{purchase}', 'ScheduledPurchaseController@update');
+Route::post('/s-purchases/', 'ScheduledPurchaseController@store');
+Route::delete('/s-purchases/{purchase}', 'ScheduledPurchaseController@destroy');
+
 // Category
 Route::get('/categories', 'CategoryController@index');
 Route::get('/categories/{category}', 'CategoryController@show');
