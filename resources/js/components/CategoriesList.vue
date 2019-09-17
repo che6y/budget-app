@@ -1,8 +1,7 @@
 <template>
     <div>
         <div class="flex-wrap categories-list" role="group">
-            <button v-for="category in categories" @click="onCategoryIconClick($event, category.id,
-            category.icon )" type="button" class="btn btn-outline-info btn-sm">{{ category.title }}
+            <button v-for="category in categories" @click="onCategoryIconClick($event, category )" type="button" class="btn btn-outline-info btn-sm">{{ category.title }}
                 <i v-if="category.icon" class="fas" v-bind:class="[category.icon ? 'fa-' + category.icon : '']"></i>
             </button><button class="btn btn-outline-info btn-sm" data-toggle="modal" data-target="#add-category-form" type="button">
                 <i class="fas fa-plus"></i>

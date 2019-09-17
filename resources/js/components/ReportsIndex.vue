@@ -60,6 +60,7 @@
     import reports_api from '../api/reports';
     import * as moment from 'moment';
     import Chart from 'chart.js';
+    import colors from '../colors.js';
 
     export default {
         name: "ReportsIndex",
@@ -74,6 +75,7 @@
                     date_to     : moment( new Date() ).add(1, 'd').format( 'YYYY-MM-DD' ),
                     category_id : 0,
                 },
+                colors: colors,
                 purchases: null,
                 totalCost: null,
                 pieData  : null,
@@ -82,6 +84,7 @@
         },
         mounted() {
             const _this = this;
+            console.log(this.colors);
             $('#purchase_date_from').datepicker({
                 dateFormat  : "yy-mm-dd",
                 changeMonth : true,
@@ -126,8 +129,7 @@
                     data: {
                         datasets: [{
                             data: data,
-                            backgroundColor:
-                                ['#aec7e8','#ffbb78','#98df8a','#ff9896','#c5b0d5','#c49c94','#f7b6d2','#c7c7c7','#dbdb8d','#9edae5']
+                            backgroundColor: colors
                         }],
 
                         labels: labels

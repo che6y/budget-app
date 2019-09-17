@@ -88,16 +88,18 @@
                     setTimeout(() => this.error = null, 3000);
                 }).then(_ => this.saving = false);
             },
-            onCategoryIconClick( event, categoryID, categoryIcon ) {
+            onCategoryIconClick( event, category ) {
                 let closest_btn = $( event.target ).closest('button');
 
                 if ( closest_btn.hasClass('active') ){
+                    this.purchase.title       = '';
                     this.purchase.category_id = null;
                     this.purchase.icon        = '';
                     closest_btn.removeClass('active');
                 } else {
-                    this.purchase.category_id = categoryID;
-                    this.purchase.icon        = categoryIcon;
+                    this.purchase.title       = category.title;
+                    this.purchase.category_id = category.id;
+                    this.purchase.icon        = category.icon;
                     closest_btn.addClass('active').siblings().removeClass('active');
                 }
             },
