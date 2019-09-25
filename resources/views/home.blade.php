@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-10">
             @if (Auth::check())
-                <app :total="{{ $total }}" :last-total="{{ $lastTotal }}"></app>
+                <app :total="{{ $total }}" :monthly-spendings="{{ $monthly_spendings }}"></app>
            @else
                 <h3>
                     Sorry, you don't have permissions to access this page!

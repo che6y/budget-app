@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Purchase;
-use Illuminate\Support\Facades\Auth;
+use App\MonthlySpending;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -12,7 +12,8 @@ class AppController extends Controller
 
     public function index()
     {
-        $today = new \DateTime('+1 day');
+        // Getting this month total - from 25th of this/last month till tomorrow (I'm using $tomorrow to include today's purchases)
+        $tomorrow = new \DateTime('+1 day');
         $date_from = date(
             'Y-m-d',
             mktime(
@@ -24,25 +25,27 @@ class AppController extends Controller
                 date('Y')
             )
         );
-//        $date_from2 = date(
-//            'Y-m-d',
-//            mktime(
-//                0,
-//                0,
-//                0,
-//                date('j') < 25 ? date('m') - 2 : date('m')-1,
-//                25,
-//                date('Y')
-//            )
-//        );
 
-        $total = Purchase::whereBetween('created_at', [$date_from, $today->format('Y-m-d')])
+        // This month total
+        $total = Purchase::whereBetween('created_at', [$date_from, $tomorrow->format('Y-m-d')])
                         ->sum(DB::raw('cost * amount'));
-//        $lastMonth = Purchase::whereBetween('created_at', [$date_from2, $date_from])
-//                            ->sum(DB::raw('cost * amount'));
+
+        // Each month spendings (this year)
+        $monthlySpendings = MonthlySpending::select('month','amount')
+                                            ->where('year', date('Y'))
+                                            ->orderBy('month', 'asc')
+                                            ->get();
+        for ($i = 0; $i < count( $monthlySpendings ); ++$i) {
+            $num       = $monthlySpendings[$i]->month;
+            $dateObj   = \DateTime::createFromFormat('!m', $num);
+
+            $monthlySpendings[$i]->month = $dateObj->format('F');
+            $monthlySpendings[$i]->saved = 117000 - $monthlySpendings[$i]->amount;
+        }
+
         return view('/home', [
             'total' => $total,
-            'lastTotal' => '82702'
+            'monthly_spendings' => $monthlySpendings
         ]);
     }
 }

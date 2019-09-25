@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="container">
-            <router-view :total="total" :last-total="lastTotal" :categories="categories"
+            <router-view :total="total" :monthly-spendings="monthlySpendings" :categories="categories"
                          :add-category="addCategory"></router-view>
         </div>
     </div>
@@ -13,7 +13,7 @@
 
     export default {
         name: "App",
-        props: [ 'total', 'lastTotal'],
+        props: [ 'total', 'monthlySpendings'],
         data() {
             return {
                 message: null,

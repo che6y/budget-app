@@ -9,10 +9,6 @@ use Illuminate\Support\Facades\Log;
 
 class OptionController extends Controller
 {
-//    public function __construct()
-//    {
-//        $this->middleware('auth:api');
-//    }
     /**
      * Display all options.
      *
