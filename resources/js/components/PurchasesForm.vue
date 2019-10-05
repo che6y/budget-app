@@ -6,7 +6,7 @@
         <categories-list :add-category="addCategory" :on-category-icon-click="onCategoryIconClick"
                          :categories="categories"></categories-list>
 
-        <form class="form-row align-items-end" @submit.prevent="onSubmit($event)">
+        <form class="form-row align-items-end" @submit.prevent="onSubmit()">
             <input type="hidden" name="user_id"/>
 
             <div class="form-group col-md-6">
@@ -45,45 +45,50 @@
                     title      : "",
                     cost       : "",
                     amount     : 1,
-                    icon       : '',
-                    category_id: null,
-                    user_id    : null
+                    user_id    : null,
+                    category   : null
                 },
             }
         },
         methods: {
-            onSubmit( event ) {
+            onSubmit() {
                 this.saving = true;
+                var data    = "";
 
-                if ( this.purchase.category_id === null ) {
+                if ( this.purchase.category === null ) {
                     this.error  = 'Please choose category';
                     this.saving = false;
                     setTimeout(() => this.error = null, 3000);
-
                     return true;
+                }
+
+                if ( localStorage.getItem( this.purchase.category.title ).length > 0 )
+                    data = localStorage.getItem( this.purchase.category.title );
+
+                if ( data.search( this.purchase.title ) < 0 ) {
+                    data += this.purchase.title + ";";
+                    localStorage[this.purchase.category.title] = data;
                 }
 
                 purchases_api.post( {
                     title      : this.purchase.title,
                     cost       : this.purchase.cost,
                     amount     : this.purchase.amount,
-                    category_id: this.purchase.category_id,
+                    category_id: this.purchase.category.id,
                     user_id    : document.querySelector("meta[name='user-id']").getAttribute('content')
                 }).then( (response) => {
                     this.changeSummary( this.purchase.amount * this.purchase.cost, '+' );
-                    this.newPurchaseToArr(response.data.data);
-                    this.message              = 'Purchase Added';
-                    this.purchase.title       = '';
-                    this.purchase.cost        = '';
-                    this.purchase.amount      = 1;
-                    this.purchase.category_id = null;
-                    this.purchase.icon        = '';
+                    this.newPurchaseToArr( response.data.data );
+                    this.message           = 'Purchase Added';
+                    this.purchase.title    = '';
+                    this.purchase.cost     = '';
+                    this.purchase.amount   = 1;
+                    this.purchase.category = null;
 
                     $('.btn-outline-info').removeClass('active');
                     setTimeout(() => this.message = null, 3000);
 
                 }).catch( error => {
-                    console.log(error);
                     this.error = 'Something went wrong, please try again later';
                     setTimeout(() => this.error = null, 3000);
                 }).then(_ => this.saving = false);
@@ -92,15 +97,16 @@
                 let closest_btn = $( event.target ).closest('button');
 
                 if ( closest_btn.hasClass('active') ){
-                    this.purchase.title       = '';
-                    this.purchase.category_id = null;
-                    this.purchase.icon        = '';
+                    this.purchase.title    = '';
+                    this.purchase.category = null;
                     closest_btn.removeClass('active');
                 } else {
-                    this.purchase.title       = category.title;
-                    this.purchase.category_id = category.id;
-                    this.purchase.icon        = category.icon;
+                    $( '#purchase_title' ).focus();
+                    this.purchase.title    = category.title;
+                    this.purchase.category = category;
                     closest_btn.addClass('active').siblings().removeClass('active');
+                    var data = localStorage.getItem( category.title );
+                    console.log(data.split(";"));
                 }
             },
 

@@ -4,18 +4,6 @@
         <div v-if="message" class="alert alert-success" role="alert">{{ message }}</div>
         <div v-if="error" class="alert alert-danger" role="alert">{{ error }}</div>
 
-
-<!--        <ul v-if="monthlySpendings" class="list-group">-->
-<!--            <li v-for="spending in monthlySpendings" class="list-group-item d-flex justify-content-between align-items-center">-->
-<!--                {{ spending.month }}: {{ spending.amount }}-->
-<!--&lt;!&ndash;                <span v-if="spending.saved > 0"> Saved: {{ spending.saved }}</span>&ndash;&gt;-->
-<!--&lt;!&ndash;                <span v-else-if="spending.saved < 0"> Lost: {{ spending.saved * (-1) }}</span>&ndash;&gt;-->
-<!--&lt;!&ndash;                <span v-else="spending.saved === 0">Nothing saved ;(</span>&ndash;&gt;-->
-<!--                <span class="badge" :class="[(spending.saved >= 0) ? 'badge-success' : 'badge-danger']">{{ spending.saved }}</span>-->
-<!--            </li>-->
-<!--        </ul>-->
-
-
         <progress-bar :summary="summary"></progress-bar>
 
         <purchases-form
@@ -139,7 +127,6 @@
         },
         created() {
             this.fetchPurchaseData();
-            console.log(this.monthlySpendings);
         },
         watch: {
             purchases: function (val) {
