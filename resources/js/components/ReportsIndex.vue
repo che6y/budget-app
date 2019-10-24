@@ -84,8 +84,8 @@
         },
         mounted() {
             const _this = this;
-            console.log(this.colors);
             $('#purchase_date_from').datepicker({
+                firstDay: 1,
                 dateFormat  : "yy-mm-dd",
                 changeMonth : true,
                 minDate     : '-2y',
@@ -95,6 +95,7 @@
                 }
             });
             $('#purchase_date_to').datepicker({
+                firstDay: 1,
                 dateFormat  : "yy-mm-dd",
                 changeMonth : true,
                 minDate     : '-2y',

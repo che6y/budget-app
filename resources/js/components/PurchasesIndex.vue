@@ -206,6 +206,7 @@
 
                 if ( parent.find('.purchase-edit').css('display') === 'none' ){
                     $('#purchase_date').datepicker({
+                        firstDay: 1,
                         dateFormat: "yy-mm-dd",
                         changeMonth: true,
                         minDate: '-1y',
