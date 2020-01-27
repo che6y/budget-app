@@ -16,7 +16,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        'App\Console\Commands\BackupDB',
     ];
 
     /**
@@ -35,7 +35,7 @@ class Kernel extends ConsoleKernel
                     0,
                     0,
                     0,
-                    date('m') - 1,
+                    date('n') - 1,
                     25,
                     date('Y')
                 )
@@ -45,14 +45,13 @@ class Kernel extends ConsoleKernel
             $total = Purchase::whereBetween( 'created_at', [$date_from, $today])
                                 ->sum(DB::raw('cost * amount'));
             MonthlySpending::insert(array(
-                'month'  => date('n', time()),
+                'month'  => date('m', time()),
                 'year'   => date('Y', time()),
                 'amount' => $total
             ));
         })->monthlyOn(25, '05:00');
 
-        $schedule->command('db:backup')->everyTenMinutes();
-            //->mondays()->at('07:00');
+        $schedule->command('db:backup')->mondays()->at('07:00');
     }
 
     /**

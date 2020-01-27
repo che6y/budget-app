@@ -103,25 +103,31 @@
         props: [ 'total', 'monthlySpendings', 'categories', 'addCategory' ],
         data() {
             return {
-                message    : null,
-                error      : null,
-                saving     : false,
-                purchases  : null,
-                summary    : this.total,
-                todaysTotal: 0,
+                message     : null,
+                error       : null,
+                saving      : false,
+                purchases   : null,
+                summary     : this.total,
+                todaysTotal : 0,
             };
         },
         computed: {
             saved: function() {
                 var total = 0;
-                this.monthlySpendings.forEach( function( item ) {
-                    total += item.saved;
-                });
+                if ( this.monthlySpendings.length > 0 ) {
+                    this.monthlySpendings.forEach( function( item ) {
+                        total += item.saved;
+                    });
+                }
                 return total;
             },
             lastMonthTotal: function() {
-                var length = this.monthlySpendings.length;
-                return this.monthlySpendings[length - 1];
+                if ( this.monthlySpendings.length > 0 ) {
+                    var length = this.monthlySpendings.length;
+                    return this.monthlySpendings[length - 1];
+                } else {
+                    return 0;
+                }
             }
 
         },

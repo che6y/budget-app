@@ -53,7 +53,7 @@
         methods: {
             onSubmit() {
                 this.saving = true;
-                var data    = "";
+                // var data    = "";
 
                 if ( this.purchase.category === null ) {
                     this.error  = 'Please choose category';
@@ -62,13 +62,13 @@
                     return true;
                 }
 
-                if ( localStorage.getItem( this.purchase.category.title ).length > 0 )
-                    data = localStorage.getItem( this.purchase.category.title );
-
-                if ( data.search( this.purchase.title ) < 0 ) {
-                    data += this.purchase.title + ";";
-                    localStorage[this.purchase.category.title] = data;
-                }
+                // if ( localStorage.getItem( this.purchase.category.title ).length > 0 )
+                //     data = localStorage.getItem( this.purchase.category.title );
+                //
+                // if ( data.search( this.purchase.title ) < 0 ) {
+                //     data += this.purchase.title + ";";
+                //     localStorage[this.purchase.category.title] = data;
+                // }
 
                 purchases_api.post( {
                     title      : this.purchase.title,
@@ -105,8 +105,6 @@
                     this.purchase.title    = category.title;
                     this.purchase.category = category;
                     closest_btn.addClass('active').siblings().removeClass('active');
-                    var data = localStorage.getItem( category.title );
-                    console.log(data.split(";"));
                 }
             },
 

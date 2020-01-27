@@ -2351,8 +2351,7 @@ __webpack_require__.r(__webpack_exports__);
     onSubmit: function onSubmit() {
       var _this = this;
 
-      this.saving = true;
-      var data = "";
+      this.saving = true; // var data    = "";
 
       if (this.purchase.category === null) {
         this.error = 'Please choose category';
@@ -2361,14 +2360,14 @@ __webpack_require__.r(__webpack_exports__);
           return _this.error = null;
         }, 3000);
         return true;
-      }
+      } // if ( localStorage.getItem( this.purchase.category.title ).length > 0 )
+      //     data = localStorage.getItem( this.purchase.category.title );
+      //
+      // if ( data.search( this.purchase.title ) < 0 ) {
+      //     data += this.purchase.title + ";";
+      //     localStorage[this.purchase.category.title] = data;
+      // }
 
-      if (localStorage.getItem(this.purchase.category.title).length > 0) data = localStorage.getItem(this.purchase.category.title);
-
-      if (data.search(this.purchase.title) < 0) {
-        data += this.purchase.title + ";";
-        localStorage[this.purchase.category.title] = data;
-      }
 
       _api_purchases__WEBPACK_IMPORTED_MODULE_0__["default"].post({
         title: this.purchase.title,
@@ -2411,8 +2410,6 @@ __webpack_require__.r(__webpack_exports__);
         this.purchase.title = category.title;
         this.purchase.category = category;
         closest_btn.addClass('active').siblings().removeClass('active');
-        var data = localStorage.getItem(category.title);
-        console.log(data.split(";"));
       }
     }
   }
@@ -2548,14 +2545,22 @@ __webpack_require__.r(__webpack_exports__);
   computed: {
     saved: function saved() {
       var total = 0;
-      this.monthlySpendings.forEach(function (item) {
-        total += item.saved;
-      });
+
+      if (this.monthlySpendings.length > 0) {
+        this.monthlySpendings.forEach(function (item) {
+          total += item.saved;
+        });
+      }
+
       return total;
     },
     lastMonthTotal: function lastMonthTotal() {
-      var length = this.monthlySpendings.length;
-      return this.monthlySpendings[length - 1];
+      if (this.monthlySpendings.length > 0) {
+        var length = this.monthlySpendings.length;
+        return this.monthlySpendings[length - 1];
+      } else {
+        return 0;
+      }
     }
   },
   created: function created() {
@@ -2646,6 +2651,7 @@ __webpack_require__.r(__webpack_exports__);
 
       if (parent.find('.purchase-edit').css('display') === 'none') {
         $('#purchase_date').datepicker({
+          firstDay: 1,
           dateFormat: "yy-mm-dd",
           changeMonth: true,
           minDate: '-1y',
@@ -2780,8 +2786,8 @@ __webpack_require__.r(__webpack_exports__);
   mounted: function mounted() {
     var _this = this;
 
-    console.log(this.colors);
     $('#purchase_date_from').datepicker({
+      firstDay: 1,
       dateFormat: "yy-mm-dd",
       changeMonth: true,
       minDate: '-2y',
@@ -2791,6 +2797,7 @@ __webpack_require__.r(__webpack_exports__);
       }
     });
     $('#purchase_date_to').datepicker({
+      firstDay: 1,
       dateFormat: "yy-mm-dd",
       changeMonth: true,
       minDate: '-2y',
@@ -2992,6 +2999,7 @@ __webpack_require__.r(__webpack_exports__);
 
       if (parent.find('.purchase-edit').css('display') === 'none') {
         $('#purchase_date').datepicker({
+          firstDay: 1,
           dateFormat: "yy-mm-dd",
           changeMonth: true,
           minDate: '-1y',

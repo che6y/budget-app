@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
@@ -34,16 +35,16 @@ class BackupDB extends Command
         parent::__construct();
 
         $today    = date('_Y_m_d', time());
-        $filename = 'backup' . $today;
+        $filename = 'backup' . time();
         $path     = 'backups/' . $filename . '.sql';
+        $database = config('database.connections.mysql.database');
 
         $this->process = new Process(sprintf(
-            'mysqldump -u%s -p%s %s > %s',
-            config('database.connections.mysql.username'),
-            config('database.connections.mysql.password'),
-            config('database.connections.mysql.database'),
-            storage_path( $path )
+            'mysqldump --databases %s > %s',
+            $database,
+            $path
         ));
+
     }
 
     /**

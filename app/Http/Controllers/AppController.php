@@ -20,9 +20,9 @@ class AppController extends Controller
                 0,
                 0,
                 0,
-                date('j') < 25 ? date('m') - 1 : date('m'),
+                date('j') < 25 ? date('n') - 1 : date('n'),
                 25,
-                date('Y')
+                date('n') > 1 || date('j') > 25 ? date('Y') : date('Y') - 1
             )
         );
 
@@ -32,7 +32,7 @@ class AppController extends Controller
 
         // Each month spendings (this year)
         $monthlySpendings = MonthlySpending::select('month','amount')
-                                            ->where('year', date('Y'))
+                                            //->where('year', date('Y'))
                                             ->orderBy('month', 'asc')
                                             ->get();
         for ($i = 0; $i < count( $monthlySpendings ); ++$i) {
@@ -44,7 +44,7 @@ class AppController extends Controller
         }
 
         return view('/home', [
-            'total' => $total,
+            'total'             => $total,
             'monthly_spendings' => $monthlySpendings
         ]);
     }
