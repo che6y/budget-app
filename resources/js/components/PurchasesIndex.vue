@@ -1,7 +1,9 @@
 <template>
     <div class="purchases">
 
-        <div v-if="message" class="alert" :class="['alert-' + messageType]" role="alert">{{ message }}</div>
+        <transition name="slide">
+            <div v-if="message" class="alert" :class="['alert-' + messageType]" role="alert">{{ message }}</div>
+        </transition>
 
         <progress-bar :summary="summary"></progress-bar>
 
@@ -258,7 +260,15 @@
         position: fixed;
         bottom: 0;
         right: 20px;
+        max-width: 280px;
         z-index: 999999999;
+    }
+
+    .slide-enter-active {
+        animation: slide-in 2s;
+    }
+    .slide-leave-active {
+        animation: slide-in 2s reverse;
     }
 
     .badge {
@@ -311,6 +321,14 @@
         } 40% {
             -webkit-transform: scale(1.0);
             transform: scale(1.0);
+        }
+    }
+    @keyframes slide-in {
+        0% {
+            transform: translateX(100%);
+        }
+        100% {
+            transform: translateX(0%);
         }
     }
 </style>

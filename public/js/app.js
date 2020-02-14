@@ -2508,6 +2508,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 
 
@@ -22330,7 +22332,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.alert[data-v-e00b78ea] {\n    position: fixed;\n    bottom: 0;\n    right: 20px;\n    z-index: 999999999;\n}\n.badge[data-v-e00b78ea] {\n    font-size: 85%;\n}\n.fa[data-v-e00b78ea] {\n    padding-right: 10px;\n}\n.purchase-edit[data-v-e00b78ea] {\n    display: none;\n}\n.spinner[data-v-e00b78ea] {\n    margin: 100px auto 0;\n    width: 70px;\n    text-align: center;\n}\n.spinner > div[data-v-e00b78ea] {\n    width: 18px;\n    height: 18px;\n    background-color: #e9ecef;\n    border-radius: 100%;\n    display: inline-block;\n    -webkit-animation: sk-bouncedelay-data-v-e00b78ea 1.4s infinite ease-in-out both;\n    animation: sk-bouncedelay-data-v-e00b78ea 1.4s infinite ease-in-out both;\n}\n.spinner .bounce1[data-v-e00b78ea] {\n    -webkit-animation-delay: -0.32s;\n    animation-delay: -0.32s;\n}\n.spinner .bounce2[data-v-e00b78ea] {\n    -webkit-animation-delay: -0.16s;\n    animation-delay: -0.16s;\n}\n@-webkit-keyframes sk-bouncedelay-data-v-e00b78ea {\n0%, 80%, 100% { -webkit-transform: scale(0)\n}\n40% { -webkit-transform: scale(1.0)\n}\n}\n@keyframes sk-bouncedelay-data-v-e00b78ea {\n0%, 80%, 100% {\n        -webkit-transform: scale(0);\n        transform: scale(0);\n}\n40% {\n        -webkit-transform: scale(1.0);\n        transform: scale(1.0);\n}\n}\n", ""]);
+exports.push([module.i, "\n.alert[data-v-e00b78ea] {\n    position: fixed;\n    bottom: 0;\n    right: 20px;\n    max-width: 280px;\n    z-index: 999999999;\n}\n.slide-enter-active[data-v-e00b78ea] {\n    -webkit-animation: slide-in-data-v-e00b78ea 2s;\n            animation: slide-in-data-v-e00b78ea 2s;\n}\n.slide-leave-active[data-v-e00b78ea] {\n    animation: slide-in-data-v-e00b78ea 2s reverse;\n}\n.badge[data-v-e00b78ea] {\n    font-size: 85%;\n}\n.fa[data-v-e00b78ea] {\n    padding-right: 10px;\n}\n.purchase-edit[data-v-e00b78ea] {\n    display: none;\n}\n.spinner[data-v-e00b78ea] {\n    margin: 100px auto 0;\n    width: 70px;\n    text-align: center;\n}\n.spinner > div[data-v-e00b78ea] {\n    width: 18px;\n    height: 18px;\n    background-color: #e9ecef;\n    border-radius: 100%;\n    display: inline-block;\n    -webkit-animation: sk-bouncedelay-data-v-e00b78ea 1.4s infinite ease-in-out both;\n    animation: sk-bouncedelay-data-v-e00b78ea 1.4s infinite ease-in-out both;\n}\n.spinner .bounce1[data-v-e00b78ea] {\n    -webkit-animation-delay: -0.32s;\n    animation-delay: -0.32s;\n}\n.spinner .bounce2[data-v-e00b78ea] {\n    -webkit-animation-delay: -0.16s;\n    animation-delay: -0.16s;\n}\n@-webkit-keyframes sk-bouncedelay-data-v-e00b78ea {\n0%, 80%, 100% { -webkit-transform: scale(0)\n}\n40% { -webkit-transform: scale(1.0)\n}\n}\n@keyframes sk-bouncedelay-data-v-e00b78ea {\n0%, 80%, 100% {\n        -webkit-transform: scale(0);\n        transform: scale(0);\n}\n40% {\n        -webkit-transform: scale(1.0);\n        transform: scale(1.0);\n}\n}\n@-webkit-keyframes slide-in-data-v-e00b78ea {\n0% {\n        -webkit-transform: translateX(100%);\n                transform: translateX(100%);\n}\n100% {\n        -webkit-transform: translateX(0%);\n                transform: translateX(0%);\n}\n}\n@keyframes slide-in-data-v-e00b78ea {\n0% {\n        -webkit-transform: translateX(100%);\n                transform: translateX(100%);\n}\n100% {\n        -webkit-transform: translateX(0%);\n                transform: translateX(0%);\n}\n}\n", ""]);
 
 // exports
 
@@ -74632,17 +74634,19 @@ var render = function() {
     "div",
     { staticClass: "purchases" },
     [
-      _vm.message
-        ? _c(
-            "div",
-            {
-              staticClass: "alert",
-              class: ["alert-" + _vm.messageType],
-              attrs: { role: "alert" }
-            },
-            [_vm._v(_vm._s(_vm.message))]
-          )
-        : _vm._e(),
+      _c("transition", { attrs: { name: "slide" } }, [
+        _vm.message
+          ? _c(
+              "div",
+              {
+                staticClass: "alert",
+                class: ["alert-" + _vm.messageType],
+                attrs: { role: "alert" }
+              },
+              [_vm._v(_vm._s(_vm.message))]
+            )
+          : _vm._e()
+      ]),
       _vm._v(" "),
       _c("progress-bar", { attrs: { summary: _vm.summary } }),
       _vm._v(" "),
