@@ -1,7 +1,5 @@
 <template>
     <div>
-        <div v-if="message" class="alert alert-success" role="alert">{{ message }}</div>
-        <div v-if="error" class="alert alert-danger" role="alert">{{ error }}</div>
 
         <categories-list :add-category="addCategory" :on-category-icon-click="onCategoryIconClick"
                          :categories="categories"></categories-list>
@@ -35,11 +33,9 @@
 
     export default {
         name: "PurchasesForm",
-        props: ['categories', 'changeSummary', 'newPurchaseToArr', 'addCategory'],
+        props: ['categories', 'changeSummary', 'newPurchaseToArr', 'addCategory', 'showMessage'],
         data() {
             return {
-                error   : null,
-                message : null,
                 saving  : false,
                 purchase: {
                     title      : "",
@@ -53,22 +49,12 @@
         methods: {
             onSubmit() {
                 this.saving = true;
-                // var data    = "";
 
                 if ( this.purchase.category === null ) {
-                    this.error  = 'Please choose category';
                     this.saving = false;
-                    setTimeout(() => this.error = null, 3000);
+                    this.showMessage('Please choose category', 'danger');
                     return true;
                 }
-
-                // if ( localStorage.getItem( this.purchase.category.title ).length > 0 )
-                //     data = localStorage.getItem( this.purchase.category.title );
-                //
-                // if ( data.search( this.purchase.title ) < 0 ) {
-                //     data += this.purchase.title + ";";
-                //     localStorage[this.purchase.category.title] = data;
-                // }
 
                 purchases_api.post( {
                     title      : this.purchase.title,
@@ -79,18 +65,16 @@
                 }).then( (response) => {
                     this.changeSummary( this.purchase.amount * this.purchase.cost, '+' );
                     this.newPurchaseToArr( response.data.data );
-                    this.message           = 'Purchase Added';
                     this.purchase.title    = '';
                     this.purchase.cost     = '';
                     this.purchase.amount   = 1;
                     this.purchase.category = null;
 
                     $('.btn-outline-info').removeClass('active');
-                    setTimeout(() => this.message = null, 3000);
+                    this.showMessage('Purchase successfully added', 'success');
 
                 }).catch( error => {
-                    this.error = 'Something went wrong, please try again later';
-                    setTimeout(() => this.error = null, 3000);
+                    this.showMessage('Something went wrong, please try again later', 'danger');
                 }).then(_ => this.saving = false);
             },
             onCategoryIconClick( event, category ) {

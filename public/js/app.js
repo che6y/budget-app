@@ -2327,16 +2327,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "PurchasesForm",
-  props: ['categories', 'changeSummary', 'newPurchaseToArr', 'addCategory'],
+  props: ['categories', 'changeSummary', 'newPurchaseToArr', 'addCategory', 'showMessage'],
   data: function data() {
     return {
-      error: null,
-      message: null,
       saving: false,
       purchase: {
         title: "",
@@ -2351,23 +2347,13 @@ __webpack_require__.r(__webpack_exports__);
     onSubmit: function onSubmit() {
       var _this = this;
 
-      this.saving = true; // var data    = "";
+      this.saving = true;
 
       if (this.purchase.category === null) {
-        this.error = 'Please choose category';
         this.saving = false;
-        setTimeout(function () {
-          return _this.error = null;
-        }, 3000);
+        this.showMessage('Please choose category', 'danger');
         return true;
-      } // if ( localStorage.getItem( this.purchase.category.title ).length > 0 )
-      //     data = localStorage.getItem( this.purchase.category.title );
-      //
-      // if ( data.search( this.purchase.title ) < 0 ) {
-      //     data += this.purchase.title + ";";
-      //     localStorage[this.purchase.category.title] = data;
-      // }
-
+      }
 
       _api_purchases__WEBPACK_IMPORTED_MODULE_0__["default"].post({
         title: this.purchase.title,
@@ -2380,20 +2366,15 @@ __webpack_require__.r(__webpack_exports__);
 
         _this.newPurchaseToArr(response.data.data);
 
-        _this.message = 'Purchase Added';
         _this.purchase.title = '';
         _this.purchase.cost = '';
         _this.purchase.amount = 1;
         _this.purchase.category = null;
         $('.btn-outline-info').removeClass('active');
-        setTimeout(function () {
-          return _this.message = null;
-        }, 3000);
+
+        _this.showMessage('Purchase successfully added', 'success');
       })["catch"](function (error) {
-        _this.error = 'Something went wrong, please try again later';
-        setTimeout(function () {
-          return _this.error = null;
-        }, 3000);
+        _this.showMessage('Something went wrong, please try again later', 'danger');
       }).then(function (_) {
         return _this.saving = false;
       });
@@ -2535,7 +2516,7 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       message: null,
-      error: null,
+      messageType: 'success',
       saving: false,
       purchases: null,
       summary: this.total,
@@ -2587,7 +2568,8 @@ __webpack_require__.r(__webpack_exports__);
         _this.saving = false;
       })["catch"](function (error) {
         _this.saving = false;
-        _this.error = error.response.data.message || error.message;
+
+        _this.showMessage(error.response.data.message || error.message, 'danger');
       });
     },
     newPurchaseToArr: function newPurchaseToArr(newPurchase) {
@@ -2604,14 +2586,15 @@ __webpack_require__.r(__webpack_exports__);
         category_id: purchase.category_id,
         created_at: purchase.created_at
       }).then(function (response) {
-        _this2.message = 'Purchase updated';
-        setTimeout(function () {
-          return _this2.message = null;
-        }, 3000);
+        _this2.showMessage('Purchase updated', 'success');
+
         $('.purchase-edit').hide();
         _this2.saving = false;
       })["catch"](function (error) {
         console.log(error);
+
+        _this2.showMessage('Something went wrong, please try again later', 'danger');
+
         _this2.saving = false;
       });
     },
@@ -2631,17 +2614,13 @@ __webpack_require__.r(__webpack_exports__);
 
         _this3.purchases.slice(index, 1);
 
-        _this3.message = 'Item Deleted';
-        setTimeout(function () {
-          return _this3.message = null;
-        }, 3000);
+        _this3.showMessage('Item Deleted', 'success');
+
         $('.purchase-edit').hide();
       })["catch"](function (error) {
         console.log(error);
-        _this3.error = 'Something went wrong, please try again later';
-        setTimeout(function () {
-          return _this3.error = null;
-        }, 3000);
+
+        _this3.showMessage('Something went wrong, please try again later', 'danger');
       }).then(function (_) {
         return _this3.saving = false;
       });
@@ -2680,6 +2659,15 @@ __webpack_require__.r(__webpack_exports__);
     },
     formatDate: function formatDate(date) {
       return moment__WEBPACK_IMPORTED_MODULE_2__(date).format('D MMM');
+    },
+    showMessage: function showMessage(messageText, type) {
+      var _this4 = this;
+
+      this.message = messageText;
+      this.messageType = type;
+      setTimeout(function () {
+        return _this4.message = null;
+      }, 3000);
     }
   }
 });
@@ -22342,7 +22330,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.badge[data-v-e00b78ea] {\n    font-size: 85%;\n}\n.fa[data-v-e00b78ea] {\n    padding-right: 10px;\n}\n.purchase-edit[data-v-e00b78ea] {\n    display: none;\n}\n.spinner[data-v-e00b78ea] {\n    margin: 100px auto 0;\n    width: 70px;\n    text-align: center;\n}\n.spinner > div[data-v-e00b78ea] {\n    width: 18px;\n    height: 18px;\n    background-color: #e9ecef;\n    border-radius: 100%;\n    display: inline-block;\n    -webkit-animation: sk-bouncedelay-data-v-e00b78ea 1.4s infinite ease-in-out both;\n    animation: sk-bouncedelay-data-v-e00b78ea 1.4s infinite ease-in-out both;\n}\n.spinner .bounce1[data-v-e00b78ea] {\n    -webkit-animation-delay: -0.32s;\n    animation-delay: -0.32s;\n}\n.spinner .bounce2[data-v-e00b78ea] {\n    -webkit-animation-delay: -0.16s;\n    animation-delay: -0.16s;\n}\n@-webkit-keyframes sk-bouncedelay-data-v-e00b78ea {\n0%, 80%, 100% { -webkit-transform: scale(0)\n}\n40% { -webkit-transform: scale(1.0)\n}\n}\n@keyframes sk-bouncedelay-data-v-e00b78ea {\n0%, 80%, 100% {\n        -webkit-transform: scale(0);\n        transform: scale(0);\n}\n40% {\n        -webkit-transform: scale(1.0);\n        transform: scale(1.0);\n}\n}\n", ""]);
+exports.push([module.i, "\n.alert[data-v-e00b78ea] {\n    position: fixed;\n    bottom: 0;\n    right: 20px;\n    z-index: 999999999;\n}\n.badge[data-v-e00b78ea] {\n    font-size: 85%;\n}\n.fa[data-v-e00b78ea] {\n    padding-right: 10px;\n}\n.purchase-edit[data-v-e00b78ea] {\n    display: none;\n}\n.spinner[data-v-e00b78ea] {\n    margin: 100px auto 0;\n    width: 70px;\n    text-align: center;\n}\n.spinner > div[data-v-e00b78ea] {\n    width: 18px;\n    height: 18px;\n    background-color: #e9ecef;\n    border-radius: 100%;\n    display: inline-block;\n    -webkit-animation: sk-bouncedelay-data-v-e00b78ea 1.4s infinite ease-in-out both;\n    animation: sk-bouncedelay-data-v-e00b78ea 1.4s infinite ease-in-out both;\n}\n.spinner .bounce1[data-v-e00b78ea] {\n    -webkit-animation-delay: -0.32s;\n    animation-delay: -0.32s;\n}\n.spinner .bounce2[data-v-e00b78ea] {\n    -webkit-animation-delay: -0.16s;\n    animation-delay: -0.16s;\n}\n@-webkit-keyframes sk-bouncedelay-data-v-e00b78ea {\n0%, 80%, 100% { -webkit-transform: scale(0)\n}\n40% { -webkit-transform: scale(1.0)\n}\n}\n@keyframes sk-bouncedelay-data-v-e00b78ea {\n0%, 80%, 100% {\n        -webkit-transform: scale(0);\n        transform: scale(0);\n}\n40% {\n        -webkit-transform: scale(1.0);\n        transform: scale(1.0);\n}\n}\n", ""]);
 
 // exports
 
@@ -74494,22 +74482,6 @@ var render = function() {
   return _c(
     "div",
     [
-      _vm.message
-        ? _c(
-            "div",
-            { staticClass: "alert alert-success", attrs: { role: "alert" } },
-            [_vm._v(_vm._s(_vm.message))]
-          )
-        : _vm._e(),
-      _vm._v(" "),
-      _vm.error
-        ? _c(
-            "div",
-            { staticClass: "alert alert-danger", attrs: { role: "alert" } },
-            [_vm._v(_vm._s(_vm.error))]
-          )
-        : _vm._e(),
-      _vm._v(" "),
       _c("categories-list", {
         attrs: {
           "add-category": _vm.addCategory,
@@ -74663,16 +74635,12 @@ var render = function() {
       _vm.message
         ? _c(
             "div",
-            { staticClass: "alert alert-success", attrs: { role: "alert" } },
+            {
+              staticClass: "alert",
+              class: ["alert-" + _vm.messageType],
+              attrs: { role: "alert" }
+            },
             [_vm._v(_vm._s(_vm.message))]
-          )
-        : _vm._e(),
-      _vm._v(" "),
-      _vm.error
-        ? _c(
-            "div",
-            { staticClass: "alert alert-danger", attrs: { role: "alert" } },
-            [_vm._v(_vm._s(_vm.error))]
           )
         : _vm._e(),
       _vm._v(" "),
@@ -74683,7 +74651,8 @@ var render = function() {
           categories: _vm.categories,
           "change-summary": _vm.changeSummary,
           "new-purchase-to-arr": _vm.newPurchaseToArr,
-          "add-category": _vm.addCategory
+          "add-category": _vm.addCategory,
+          showMessage: _vm.showMessage
         }
       }),
       _vm._v(" "),

@@ -1,8 +1,7 @@
 <template>
     <div class="purchases">
 
-        <div v-if="message" class="alert alert-success" role="alert">{{ message }}</div>
-        <div v-if="error" class="alert alert-danger" role="alert">{{ error }}</div>
+        <div v-if="message" class="alert" :class="['alert-' + messageType]" role="alert">{{ message }}</div>
 
         <progress-bar :summary="summary"></progress-bar>
 
@@ -11,6 +10,7 @@
                 :change-summary="changeSummary"
                 :new-purchase-to-arr="newPurchaseToArr"
                 :add-category="addCategory"
+                :showMessage="showMessage"
         >
         </purchases-form>
 
@@ -104,7 +104,7 @@
         data() {
             return {
                 message     : null,
-                error       : null,
+                messageType : 'success',
                 saving      : false,
                 purchases   : null,
                 summary     : this.total,
@@ -154,8 +154,8 @@
                         this.purchases = response.data.data;
                         this.saving = false;
                     }).catch(error => {
-                        this.saving = false;
-                        this.error = error.response.data.message || error.message;
+                        this.saving      = false;
+                        this.showMessage(error.response.data.message || error.message, 'danger');
                     });
             },
 
@@ -167,18 +167,18 @@
                 this.saving = true;
 
                 purchases_api.update(purchase.id, {
-                    title: purchase.title,
-                    cost: purchase.cost,
-                    amount: purchase.amount,
-                    category_id: purchase.category_id,
-                    created_at: purchase.created_at
+                    title       : purchase.title,
+                    cost        : purchase.cost,
+                    amount      : purchase.amount,
+                    category_id : purchase.category_id,
+                    created_at  : purchase.created_at
                 }).then((response) => {
-                    this.message = 'Purchase updated';
-                    setTimeout(() => this.message = null, 3000);
+                    this.showMessage('Purchase updated', 'success');
                     $('.purchase-edit').hide();
                     this.saving = false;
                 }).catch(error => {
                     console.log(error);
+                    this.showMessage('Something went wrong, please try again later', 'danger');
                     this.saving = false;
                 });
             },
@@ -197,14 +197,12 @@
                         });
                         this.purchases.slice(index, 1);
 
-                        this.message = 'Item Deleted';
-                        setTimeout(() => this.message = null, 3000);
+                        this.showMessage('Item Deleted', 'success');
                         $('.purchase-edit').hide();
                     })
                     .catch( error => {
                         console.log(error);
-                        this.error = 'Something went wrong, please try again later';
-                        setTimeout(() => this.error = null, 3000);
+                        this.showMessage('Something went wrong, please try again later', 'danger');
                     }).then(_ => this.saving = false);
             },
             onBtnClick( event, index, purchase ) {
@@ -245,12 +243,24 @@
             formatDate( date ) {
                 return moment( date ).format( 'D MMM' );
             },
+            showMessage( messageText, type ) {
+                this.message = messageText;
+                this.messageType = type;
+                setTimeout(() => this.message = null, 3000);
+            }
         },
 
     }
 </script>
 
 <style scoped>
+    .alert {
+        position: fixed;
+        bottom: 0;
+        right: 20px;
+        z-index: 999999999;
+    }
+
     .badge {
         font-size: 85%;
     }
