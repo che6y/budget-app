@@ -2349,6 +2349,13 @@ __webpack_require__.r(__webpack_exports__);
 
       this.saving = true;
 
+      if (/\s/.test(this.purchase.cost)) {
+        var costsArr = this.purchase.cost.split(' ');
+        this.purchase.cost = costsArr.reduce(function (a, b) {
+          return parseInt(a) + (parseInt(b) || 0);
+        }, 0);
+      }
+
       if (this.purchase.category === null) {
         this.saving = false;
         this.showMessage('Please choose category', 'danger');
@@ -2374,6 +2381,8 @@ __webpack_require__.r(__webpack_exports__);
 
         _this.showMessage('Purchase successfully added', 'success');
       })["catch"](function (error) {
+        console.log(error);
+
         _this.showMessage('Something went wrong, please try again later', 'danger');
       }).then(function (_) {
         return _this.saving = false;
@@ -2581,6 +2590,14 @@ __webpack_require__.r(__webpack_exports__);
       var _this2 = this;
 
       this.saving = true;
+
+      if (/\s/.test(purchase.cost)) {
+        var costsArr = purchase.cost.split(' ');
+        purchase.cost = costsArr.reduce(function (a, b) {
+          return parseInt(a) + (parseInt(b) || 0);
+        }, 0);
+      }
+
       _api_purchases__WEBPACK_IMPORTED_MODULE_1__["default"].update(purchase.id, {
         title: purchase.title,
         cost: purchase.cost,
@@ -74547,7 +74564,7 @@ var render = function() {
                 }
               ],
               staticClass: "form-control",
-              attrs: { id: "purchase_cost", type: "number", required: "" },
+              attrs: { id: "purchase_cost", type: "text", required: "" },
               domProps: { value: _vm.purchase.cost },
               on: {
                 input: function($event) {
@@ -74852,7 +74869,7 @@ var render = function() {
                               staticClass: "form-control",
                               attrs: {
                                 id: "purchase_cost",
-                                type: "number",
+                                type: "text",
                                 required: ""
                               },
                               domProps: { value: purchase.cost },

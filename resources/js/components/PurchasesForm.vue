@@ -13,7 +13,7 @@
             </div>
             <div class="form-group col-md-2">
                 <label for="purchase_cost">Price</label>
-                <input class="form-control" id="purchase_cost" type="number" v-model="purchase.cost" required />
+                <input class="form-control" id="purchase_cost" type="text" v-model="purchase.cost" required />
             </div>
 <!--            <div class="form-group col-md-2">-->
 <!--                <label for="purchase_amount">Amount</label>-->
@@ -50,6 +50,11 @@
             onSubmit() {
                 this.saving = true;
 
+                if ( /\s/.test( this.purchase.cost ) ){
+                    let costsArr       = this.purchase.cost.split(' ');
+                    this.purchase.cost = costsArr.reduce((a, b) => parseInt(a) + (parseInt(b) || 0), 0);
+                }
+
                 if ( this.purchase.category === null ) {
                     this.saving = false;
                     this.showMessage('Please choose category', 'danger');
@@ -72,8 +77,8 @@
 
                     $('.btn-outline-info').removeClass('active');
                     this.showMessage('Purchase successfully added', 'success');
-
                 }).catch( error => {
+                    console.log( error );
                     this.showMessage('Something went wrong, please try again later', 'danger');
                 }).then(_ => this.saving = false);
             },

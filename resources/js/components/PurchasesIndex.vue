@@ -64,7 +64,7 @@
                         </div>
                         <div class="form-group col-md-3">
                             <label for="purchase_cost">Price</label>
-                            <input class="form-control" id="purchase_cost" type="number" v-model="purchase.cost" required />
+                            <input class="form-control" id="purchase_cost" type="text" v-model="purchase.cost" required />
                         </div>
 
                         <div class="form-group col-md-3">
@@ -167,6 +167,11 @@
 
             onPurchaseEdit( event, purchase ) {
                 this.saving = true;
+
+                if ( /\s/.test( purchase.cost ) ){
+                    let costsArr       = purchase.cost.split(' ');
+                    purchase.cost = costsArr.reduce((a, b) => parseInt(a) + (parseInt(b) || 0), 0);
+                }
 
                 purchases_api.update(purchase.id, {
                     title       : purchase.title,
